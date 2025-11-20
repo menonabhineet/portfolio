@@ -189,7 +189,7 @@ export default function Page() {
                I build things for the web & data.
             </h2>
             <p className="text-lg text-slate-400 mb-12 max-w-xl leading-relaxed">
-               I'm a Senior Data Engineer & CS Master's Student at UIC. I specialize in bridging the gap between <span className="text-teal-400">complex backend data</span> and <span className="text-teal-400">fluid frontend experiences</span>.
+               I'm an ex-Data Engineer & CS Master's Student at UIC. I specialize in bridging the gap between <span className="text-teal-400">complex backend data</span> and <span className="text-teal-400">fluid user experiences</span>.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
                 <button onClick={() => scrollToSection('projects')} className="px-8 py-4 rounded border border-teal-400 text-teal-400 font-mono hover:bg-teal-400/10 transition-colors">
@@ -209,7 +209,7 @@ export default function Page() {
                     <p>{resumeData.about}</p>
                     <p>Here are a few technologies I’ve been working with recently:</p>
                     <ul className="grid grid-cols-2 gap-2 font-mono text-sm">
-                        {['Python', 'Next.js', 'Snowflake', 'TypeScript', 'Azure ADF', 'Docker'].map(skill => (
+                        {['Python', 'LLMs', 'Machine Learning', 'RAGs', 'AWS', 'Docker'].map(skill => (
                             <li key={skill} className="flex items-center gap-2">
                                 <span className="text-teal-400">▹</span> {skill}
                             </li>
@@ -344,7 +344,9 @@ export default function Page() {
 
                                     {/* Content */}
                                     <h3 className="text-2xl font-bold text-slate-100 mb-4 leading-tight group-hover:text-teal-400 transition-colors">
+                                      <a href={project.link.href} target="_blank" className="text-slate-500 hover:text-teal-400 transition-colors">
                                         {project.title}
+                                      </a>
                                     </h3>
                                     
                                     <div className="flex-grow overflow-y-auto pr-2 custom-scrollbar">
