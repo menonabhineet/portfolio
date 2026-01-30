@@ -15,7 +15,6 @@ export const MatrixBackground = () => {
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
     
-    // Binary characters - added some special chars for extra "hacker" feel
     const characters = "01";
     const fontSize = 14;
     const columns = Math.floor(width / fontSize);
@@ -26,11 +25,10 @@ export const MatrixBackground = () => {
     }
 
     const draw = () => {
-      // Lower opacity fade for longer "trails"
-      ctx.fillStyle = "rgba(15, 23, 42, 0.05)"; 
+      ctx.fillStyle = "rgba(15, 23, 42, 0.10)"; 
       ctx.fillRect(0, 0, width, height);
 
-      ctx.fillStyle = "#0d9488"; // Tealer/Greener text
+      ctx.fillStyle = "#0d9488";
       ctx.font = `${fontSize}px monospace`;
 
       for (let i = 0; i < drops.length; i++) {
@@ -52,7 +50,6 @@ export const MatrixBackground = () => {
       }
     };
 
-    // Faster speed (35ms instead of 50ms)
     const interval = setInterval(draw, 35);
 
     const handleResize = () => {

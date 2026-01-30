@@ -183,13 +183,13 @@ export default function Page() {
         <section id="hero" className="min-h-screen flex flex-col justify-center items-start pt-20">
             <p className="text-teal-400 font-mono mb-5 ml-1">Hi, my name is</p>
             <h1 className="text-5xl font-bold tracking-tight text-slate-100 sm:text-7xl mb-4">
-              {resumeData.name}.
+              {resumeData.name}
             </h1>
-            <h2 className="text-4xl sm:text-6xl font-bold text-slate-400 mb-6">
-               I build things for the web & data.
+            <h2 className="text-4xl sm:text-5xl font-bold text-slate-400 mb-6">
+               MS in Computer Science at UIC
             </h2>
             <p className="text-lg text-slate-400 mb-12 max-w-xl leading-relaxed">
-               I'm an ex-Data Engineer & CS Master's Student at UIC. I specialize in bridging the gap between <span className="text-teal-400">complex backend data</span> and <span className="text-teal-400">fluid user experiences</span>.
+               I'm a Data Engineer with experience in building scalable, production-grade cloud infrastructure. I specialize in bridging the gap between <span className="text-teal-400">complex backend data</span> and <span className="text-teal-400">fluid user experiences</span>.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
                 <button onClick={() => scrollToSection('projects')} className="px-8 py-4 rounded border border-teal-400 text-teal-400 font-mono hover:bg-teal-400/10 transition-colors">

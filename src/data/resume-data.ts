@@ -91,6 +91,16 @@ export const resumeData = {
   },
   projects: [
     {
+      title: "CaseQuery - Legal RAG System",
+      techStack: ["Python", "FAISS", "Llama-3", "GitHub", "REST APIs"],
+      description:
+        " Architected a Retrieval-Augmented Generation (RAG) system for legal QA, integrating a hybrid retrieval pipeline toreduce LLM or AI hallucinations by anchoring answers to specific case law citations. Implemented embeddings generation and document chunking strategies for dense and sparse retrieval with a custom evaluation pipeline, achieving a high recall score and a 50% improvement in ROUGE-L scores over zero-shot baselines.",
+      link: {
+        label: "GitHub",
+        href: "https://github.com/menonabhineet/caseQuery",
+      },
+    },
+    {
       title: "BattyCoda: Acoustic Classification",
       techStack: ["Open Source", "Python", "Streamlit", "Signal Processing", "Matplotlib"],
       description:
