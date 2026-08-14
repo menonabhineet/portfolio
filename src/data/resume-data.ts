@@ -31,7 +31,7 @@ export const resumeData = {
       degree: "Master of Science in Computer Science",
       start: "Aug 2024",
       end: "May 2026",
-      description: "GPA: 4.0/4.0 | Coursework: CS424 - Visualization & Visual Analytics, CS472 - Provably Correct Programming, CS473 - Compiler Design, CS476 - Programming Language Design, CS505 - Computability & Complexity Theory, CS511 - Artificial Intelligence II, CS594 - Foundations of Permissionless Systems",
+      description: "GPA: 4.0/4.0 | Coursework: CS424 - Visualization & Visual Analytics, CS472 - Provably Correct Programming, CS473 - Compiler Design, CS476 - Programming Language Design, CS505 - Computability & Complexity Theory, CS511 - Artificial Intelligence II, CS533 - Deep Learning for Natural Language Processing, CS582 - Information Retrieval, CS594 - Foundations of Permissionless Systems",
     },
     {
       school: "University of Mumbai",
@@ -84,12 +84,22 @@ export const resumeData = {
     },
   ],
   skills: {
-    languages: ["Python", "Java", "C++", "SQL", "JavaScript", "TypeScript", "C#"],
-    frameworks: ["Next.js", "React", "Flask", "ASP.NET", "Tailwind CSS", "Streamlit"],
-    dataTools: ["Snowflake", "Azure Data Factory", "AWS", "MySQL", "MongoDB", "Power BI", "Tableau"],
+    languages: ["C", "C++", "Python", "Java", "SQL", "JavaScript", "TypeScript", "C#"],
+    frameworks: ["Next.js", "React", "Zustand", "Flask", "ASP.NET", "Tailwind CSS", "Streamlit"],
+    dataTools: ["Snowflake", "Azure Data Factory", "Supabase", "PostgreSQL", "ChromaDB", "AWS", "MySQL", "MongoDB", "Power BI", "Tableau"],
     devTools: ["Docker", "Git", "Jira", "Linux", "Postman", "VS Code"],
   },
   projects: [
+    {
+      title: "Pro Pundits League - FPL Addon Platform",
+      techStack: ["Next.js", "React 19", "Supabase", "TypeScript", "Tailwind CSS", "AI-Assisted Dev"],
+      description:
+        "Engineered a full-stack companion platform for Fantasy Premier League mini-leagues featuring real-time data synchronization with official FPL REST APIs, automated scoring pipelines, Survivor knockout tournaments, and exact score predictions. Built with Supabase (PostgreSQL, Row-Level Security, OAuth) and Next.js App Router, leveraging modern AI-assisted development workflows and automated agent auditing to accelerate end-to-end delivery, harden state machines, and optimize server actions.",
+      link: {
+        label: "GitHub",
+        href: "https://github.com/menonabhineet/fpl-addon-app",
+      },
+    },
     {
       title: "CaseQuery - Legal RAG System",
       techStack: ["Python", "FAISS", "Llama-3", "GitHub", "REST APIs"],
@@ -101,6 +111,56 @@ export const resumeData = {
       },
     },
     {
+      title: "10-K Financial QA - Layout-Aware RAG",
+      techStack: ["Python", "ChromaDB", "DeepSeek", "Streamlit", "Sentence-Transformers", "pdfplumber"],
+      description:
+        "Architected a layout-aware Retrieval-Augmented Generation (RAG) assistant designed for zero-hallucination question-answering over dense, table-heavy SEC 10-K annual financial filings (Apple, NVIDIA, JPMorgan, etc.). Implemented spatial whitespace preservation via pdfplumber and character chunking to maintain balance sheet alignments, paired with ChromaDB vector search, dynamic intent routing, and strict metadata filtering. Validated via a 21-benchmark QA evaluation suite achieving a 90.5% accuracy rate across single-fact lookups, cross-company comparisons, and out-of-corpus queries.",
+      link: {
+        label: "GitHub",
+        href: "https://github.com/menonabhineet/10K-QA",
+      },
+    },
+    {
+      title: "MathSCV: Multi-Agent Reasoning Architecture",
+      techStack: ["Python", "DeepSeek", "Multi-Agent Systems", "Prompt Engineering", "LLM Evaluation", "Benchmarking"],
+      description:
+        "Engineered a multi-agent debate and verification framework (Solver-Critic-Verifier) with DeepSeek-V4-Flash to investigate mathematical reasoning and arithmetic slip correction. Developed a token-efficient Unified Evaluation Engine benchmarking SCV against 4 baselines (Single-Agent CoT, Self-Consistency Voting, Self-Refine, and Basic Debate) across GSM8K, SVAMP, and ASDiv datasets. Uncovered empirical dynamics of multi-agent interactions, quantifying 'Degeneration-of-Thought' failure modes and token-efficiency trade-offs.",
+      link: {
+        label: "GitHub",
+        href: "https://github.com/menonabhineet/mathSCV",
+      },
+    },
+    {
+      title: "Bluejay Compiler",
+      techStack: ["C", "Flex", "Bison", "MIPS Assembly", "AST & IR", "Compiler Design"],
+      description:
+        "Engineered a full-scale optimizing compiler in C for the statically typed Bluejay language, targeting MIPS assembly architecture (CS473 Coursework at UIC). Built lexical and syntactic analyzers with Flex and Bison, abstract syntax trees (AST), scoped symbol tables, and strict type checking. Implemented intermediate representation (IR) lowering with tree canonicalization, stack frame activation records, MIPS code generation, and optimization passes.",
+      link: {
+        label: "Academic / Coursework",
+        href: "",
+      },
+    },
+    {
+      title: "HVAC Field Estimate - On-Site Quoting Tool",
+      techStack: ["Next.js", "React 19", "Zustand", "Tailwind CSS", "Fuse.js", "Framer Motion", "PWA"],
+      description:
+        "Architected a mobile-first, offline-resilient Progressive Web App (PWA) for HVAC technicians to generate on-site service estimates and client quotes. Features a responsive split-screen stepper, persistent state management via Zustand and localStorage, typo-tolerant fuzzy search with Fuse.js, and camera-based barcode scanning (react-zxing). Engineered dedicated CSS print media styling to generate clean, professional PDF quotes natively on mobile devices.",
+      link: {
+        label: "GitHub",
+        href: "https://github.com/menonabhineet/hvac-field-estimate",
+      },
+    },
+    {
+      title: "NYC Restaurant Inspection Analytics & UMAP Explorer",
+      techStack: ["Python", "Vega-Lite", "UMAP", "Pandas", "Altair", "JavaScript", "GeoJSON"],
+      description:
+        "Engineered an interactive multi-view visual analytics platform for UIC CS424, analyzing 280,000+ NYC Department of Health restaurant inspections across 25,000+ establishments. Extracted high-dimensional feature vectors reduced via UMAP to project semantic violation clusters. Developed linked multi-view dashboards with Vega-Lite and Vanilla JS featuring global interval cluster brushing, point metadata inspection, seasonal infraction heatmaps, MODZCTA geospatial choropleth maps, and longitudinal trend lines.",
+      link: {
+        label: "GitHub",
+        href: "https://github.com/menonabhineet/NYC-restaurant-viz",
+      },
+    },
+    {
       title: "BattyCoda: Acoustic Classification",
       techStack: ["Open Source", "Python", "Streamlit", "Signal Processing", "Matplotlib"],
       description:
@@ -108,6 +168,16 @@ export const resumeData = {
       link: {
         label: "GitHub",
         href: "https://github.com/menonabhineet/BattyCoda",
+      },
+    },
+    {
+      title: "Word Add-in: Document Redaction Suite",
+      techStack: ["TypeScript", "Office.js", "Word JavaScript API", "Regex", "HTML5", "CSS3"],
+      description:
+        "Developed an enterprise-grade Microsoft Word Add-in using Office.js and TypeScript to automate document de-identification and compliance tagging. Built multi-pattern regex engines with Unicode and whitespace normalization to sanitize sensitive PII (Emails, Phones, SSNs, Credit Cards, Employee IDs, MRNs, Insurance IDs). Integrated programmatic Track Changes activation (WordApi 1.5+) for full auditability, dynamic section header injection ('CONFIDENTIAL DOCUMENT'), and run summary reporting.",
+      link: {
+        label: "GitHub",
+        href: "https://github.com/menonabhineet/Word-Addin-For-Document-Redaction",
       },
     },
     {

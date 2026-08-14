@@ -337,16 +337,26 @@ export default function Page() {
                                         <div className="p-3 rounded-full bg-teal-400/10 text-teal-400">
                                             <FolderGit2 size={28} />
                                         </div>
-                                        <a href={project.link.href} target="_blank" className="text-slate-500 hover:text-teal-400 transition-colors">
-                                            <ArrowUpRight size={24} />
-                                        </a>
+                                        {project.link.href ? (
+                                            <a href={project.link.href} target="_blank" rel="noreferrer" className="text-slate-500 hover:text-teal-400 transition-colors">
+                                                <ArrowUpRight size={24} />
+                                            </a>
+                                        ) : (
+                                            <span className="text-xs font-mono text-teal-400/90 bg-teal-400/10 border border-teal-400/20 px-2.5 py-1 rounded-full">
+                                                {project.link.label || "Coursework"}
+                                            </span>
+                                        )}
                                     </div>
 
                                     {/* Content */}
                                     <h3 className="text-2xl font-bold text-slate-100 mb-4 leading-tight group-hover:text-teal-400 transition-colors">
-                                      <a href={project.link.href} target="_blank" className="text-slate-500 hover:text-teal-400 transition-colors">
-                                        {project.title}
-                                      </a>
+                                      {project.link.href ? (
+                                        <a href={project.link.href} target="_blank" rel="noreferrer" className="hover:text-teal-400 transition-colors">
+                                          {project.title}
+                                        </a>
+                                      ) : (
+                                        <span>{project.title}</span>
+                                      )}
                                     </h3>
                                     
                                     <div className="flex-grow overflow-y-auto pr-2 custom-scrollbar">
