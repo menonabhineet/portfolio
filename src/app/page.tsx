@@ -2,6 +2,9 @@
 
 import { resumeData } from "@/data/resume-data";
 import { MatrixBackground } from "@/components/MatrixBackground";
+import { ResumeModal } from "@/components/ResumeModal";
+import { CommandPalette } from "@/components/CommandPalette";
+import { fuzzyMatchItem } from "@/lib/fuzzy";
 import {
   Github,
   Linkedin,
@@ -29,8 +32,13 @@ import {
   ArrowRight,
   LayoutGrid,
   Rotate3d,
+  FileText,
+  Search,
+  SlidersHorizontal,
+  TrendingUp,
+  Zap,
 } from "lucide-react";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 
 // --- CONTACT FORM COMPONENT ---
 const ContactForm = () => {
@@ -121,11 +129,18 @@ export default function Page() {
   const [activeSection, setActiveSection] = useState("hero");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [projectViewMode, setProjectViewMode] = useState<"3d" | "grid">("3d");
 
-  // --- PROJECT CATEGORIES & FILTER STATE ---
+  // Modals state
+  const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+
+  // Search & Filter State
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedSkillFilter, setSelectedSkillFilter] = useState<string | null>(null);
+
+  // --- PROJECT CATEGORIES ---
   const categories = [
     { id: "all", label: "All Projects" },
     { id: "ai", label: "AI & RAG" },
@@ -137,14 +152,46 @@ export default function Page() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [currentProjectIndex, setCurrentProjectIndex] = useState(0);
 
-  const filteredProjects =
-    selectedCategory === "all"
-      ? resumeData.projects
-      : resumeData.projects.filter(
-          (p) =>
-            Array.isArray((p as any).categories) &&
-            (p as any).categories.includes(selectedCategory)
-        );
+  // Filtered Projects based on Category, Fuzzy Search Query, and Active Skill Filter
+  const filteredProjects = useMemo(() => {
+    // 1. Initial filter by category & active skill
+    const categoryAndSkillFiltered = resumeData.projects.filter((p) => {
+      const matchesCategory =
+        selectedCategory === "all" ||
+        (Array.isArray((p as any).categories) &&
+          (p as any).categories.includes(selectedCategory));
+
+      const matchesSkill =
+        !selectedSkillFilter ||
+        p.techStack.some(
+          (t) => t.toLowerCase() === selectedSkillFilter.toLowerCase()
+        ) ||
+        p.description.toLowerCase().includes(selectedSkillFilter.toLowerCase());
+
+      return matchesCategory && matchesSkill;
+    });
+
+    if (!searchQuery.trim()) {
+      return categoryAndSkillFiltered;
+    }
+
+    // 2. Multi-field fuzzy matching with weighted scoring
+    const scored = categoryAndSkillFiltered
+      .map((p) => {
+        const { isMatch, score } = fuzzyMatchItem(searchQuery, [
+          { text: p.title, weight: 3.5 },
+          { text: p.techStack, weight: 2.5 },
+          { text: (p as any).impactBadges || [], weight: 2.0 },
+          { text: (p as any).categories || [], weight: 1.5 },
+          { text: p.description, weight: 1.0 },
+        ]);
+        return { project: p, isMatch, score };
+      })
+      .filter((item) => item.isMatch)
+      .sort((a, b) => b.score - a.score);
+
+    return scored.map((item) => item.project);
+  }, [selectedCategory, searchQuery, selectedSkillFilter]);
 
   const nextProject = useCallback(() => {
     if (filteredProjects.length <= 1) return;
@@ -163,33 +210,72 @@ export default function Page() {
     setCurrentProjectIndex(0);
   };
 
+  const handleSkillClick = (skillName: string) => {
+    if (selectedSkillFilter === skillName) {
+      setSelectedSkillFilter(null);
+    } else {
+      setSelectedSkillFilter(skillName);
+      setSelectedCategory("all");
+      setCurrentProjectIndex(0);
+      scrollToSection("projects");
+    }
+  };
+
+  const handleSelectProjectFromPalette = (projectTitle: string) => {
+    setSelectedCategory("all");
+    setSearchQuery("");
+    setSelectedSkillFilter(null);
+    const index = resumeData.projects.findIndex((p) => p.title === projectTitle);
+    if (index !== -1) {
+      setCurrentProjectIndex(index);
+    }
+    scrollToSection("projects");
+  };
+
   const copyEmailToClipboard = () => {
     navigator.clipboard.writeText(resumeData.contact.email);
     setCopiedEmail(true);
     setTimeout(() => setCopiedEmail(false), 2500);
   };
 
-  // --- KEYBOARD NAVIGATION FOR CAROUSEL ---
+  // --- KEYBOARD SHORTCUTS (Ctrl+K, 3D Navigation) ---
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (projectViewMode !== "3d") return;
-      if (e.key === "ArrowLeft") {
-        prevProject();
-      } else if (e.key === "ArrowRight") {
-        nextProject();
+      // Ctrl+K or Cmd+K for Command Palette
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault();
+        setIsCommandPaletteOpen((prev) => !prev);
+        return;
+      }
+
+      // 3D Carousel arrow navigation
+      if (projectViewMode === "3d" && !isCommandPaletteOpen && !isResumeModalOpen) {
+        if (e.key === "ArrowLeft") {
+          prevProject();
+        } else if (e.key === "ArrowRight") {
+          nextProject();
+        }
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [nextProject, prevProject, projectViewMode]);
+  }, [nextProject, prevProject, projectViewMode, isCommandPaletteOpen, isResumeModalOpen]);
 
-  // --- MOUSE TRACKING ---
+  // --- MOUSE SPOTLIGHT (Direct CSS Variable Injection - 0 Re-renders) ---
   useEffect(() => {
+    let rafId: number;
     const handleMouseMove = (event: MouseEvent) => {
-      setMousePosition({ x: event.clientX, y: event.clientY });
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        document.documentElement.style.setProperty("--mouse-x", `${event.clientX}px`);
+        document.documentElement.style.setProperty("--mouse-y", `${event.clientY}px`);
+      });
     };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
   }, []);
 
   // --- SCROLL HANDLER ---
@@ -230,14 +316,8 @@ export default function Page() {
   };
 
   return (
-    <div
-      className="relative min-h-screen bg-[#050814] font-sans selection:bg-teal-400 selection:text-slate-950 text-slate-400 overflow-x-hidden"
-      style={{
-        ["--mouse-x" as any]: `${mousePosition.x}px`,
-        ["--mouse-y" as any]: `${mousePosition.y}px`,
-      }}
-    >
-      {/* SUBTLE STATIC AMBIENT ACCENTS */}
+    <div className="relative min-h-screen bg-[#050814] font-sans selection:bg-teal-400 selection:text-slate-950 text-slate-400 overflow-x-hidden">
+      {/* AMBIENT ACCENTS */}
       <div className="fixed top-0 left-1/4 w-96 h-96 bg-teal-500/[0.03] rounded-full blur-[140px] pointer-events-none -z-10" />
       <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-indigo-500/[0.02] rounded-full blur-[140px] pointer-events-none -z-10" />
 
@@ -268,6 +348,7 @@ export default function Page() {
             <span className="text-teal-400 group-hover:translate-x-0.5 transition-transform">/&gt;</span>
           </a>
 
+          {/* Nav Items */}
           <nav className="hidden md:block">
             <ul className="flex items-center gap-1.5 p-1.5 rounded-full bg-slate-900/80 border border-white/10 backdrop-blur-md">
               {navItems.map((item) => {
@@ -290,19 +371,46 @@ export default function Page() {
             </ul>
           </nav>
 
-          <button
-            className="md:hidden text-slate-200 p-2.5 rounded-2xl bg-slate-900/90 border border-white/10"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label="Toggle Navigation Menu"
-          >
-            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
+          {/* Quick Actions in Header */}
+          <div className="flex items-center gap-2.5">
+            {/* Quick Command Palette Button */}
+            <button
+              onClick={() => setIsCommandPaletteOpen(true)}
+              className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-white/10 hover:border-teal-400/40 text-xs font-mono text-slate-300 hover:text-teal-300 transition-all cursor-pointer shadow-sm"
+              title="Open Command Palette (Ctrl+K or Cmd+K)"
+            >
+              <Search size={13} className="text-teal-400" />
+              <span className="text-slate-400">Search</span>
+              <kbd className="px-1.5 py-0.2 rounded bg-slate-800 border border-white/10 text-[10px] text-slate-400">
+                ⌘K
+              </kbd>
+            </button>
+
+            {/* Official Resume Button */}
+            <button
+              onClick={() => setIsResumeModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-teal-400/10 border border-teal-400/30 hover:border-teal-400 hover:bg-teal-400 hover:text-slate-950 text-teal-300 text-xs font-mono font-semibold transition-all duration-200 cursor-pointer shadow-sm"
+              title="Preview & Download Official Resume PDF"
+            >
+              <FileText size={13} />
+              <span>Resume</span>
+            </button>
+
+            {/* Mobile Menu Toggle */}
+            <button
+              className="md:hidden text-slate-200 p-2.5 rounded-2xl bg-slate-900/90 border border-white/10 cursor-pointer"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Toggle Navigation Menu"
+            >
+              {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu Drawer */}
         {isMobileMenuOpen && (
           <div className="absolute top-full left-0 w-full bg-[#050814]/95 backdrop-blur-2xl border-b border-white/10 p-6 md:hidden shadow-2xl">
-            <ul className="flex flex-col gap-3 text-center">
+            <ul className="flex flex-col gap-3 text-center mb-4">
               {navItems.map((item) => (
                 <li key={item}>
                   <button
@@ -318,12 +426,35 @@ export default function Page() {
                 </li>
               ))}
             </ul>
+
+            <div className="pt-4 border-t border-white/10 flex flex-col gap-2">
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setIsResumeModalOpen(true);
+                }}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-teal-400 text-slate-950 font-mono font-bold text-sm"
+              >
+                <FileText size={16} />
+                <span>View Resume PDF</span>
+              </button>
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setIsCommandPaletteOpen(true);
+                }}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-900 border border-white/10 text-slate-300 font-mono text-sm"
+              >
+                <Search size={16} className="text-teal-400" />
+                <span>Search &amp; Commands</span>
+              </button>
+            </div>
           </div>
         )}
       </header>
 
       <main className="relative z-10 mx-auto max-w-5xl px-6 md:px-12 lg:px-0">
-        {/* HERO SECTION - FLUID, MODERN, SPACIOUS */}
+        {/* HERO SECTION */}
         <section id="hero" className="min-h-screen flex flex-col justify-center items-start pt-28 pb-20">
           {/* Status Badge */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/25 text-teal-300 text-xs font-mono mb-8 backdrop-blur-md">
@@ -350,7 +481,7 @@ export default function Page() {
           </p>
 
           {/* Action Buttons */}
-          <div className="flex flex-wrap gap-4 mb-14">
+          <div className="flex flex-wrap gap-3.5 mb-14">
             <button
               onClick={() => scrollToSection("projects")}
               className="px-7 py-4 rounded-full bg-teal-400 text-slate-950 font-mono font-bold text-sm hover:bg-teal-300 hover:shadow-[0_0_30px_rgba(45,212,191,0.4)] hover:scale-105 transition-all duration-300 cursor-pointer flex items-center gap-2"
@@ -359,14 +490,21 @@ export default function Page() {
               <ArrowRight size={16} />
             </button>
             <button
+              onClick={() => setIsResumeModalOpen(true)}
+              className="px-6 py-4 rounded-full bg-teal-400/10 border border-teal-400/40 text-teal-300 font-mono font-semibold text-sm hover:bg-teal-400 hover:text-slate-950 transition-all duration-300 cursor-pointer flex items-center gap-2 shadow-md"
+            >
+              <FileText size={16} />
+              <span>View Resume</span>
+            </button>
+            <button
               onClick={() => scrollToSection("contact")}
-              className="px-7 py-4 rounded-full bg-slate-900/90 border border-white/15 text-slate-200 font-mono text-sm hover:border-teal-400 hover:text-teal-300 transition-all duration-300 cursor-pointer shadow-md"
+              className="px-6 py-4 rounded-full bg-slate-900/90 border border-white/15 text-slate-200 font-mono text-sm hover:border-teal-400 hover:text-teal-300 transition-all duration-300 cursor-pointer shadow-md"
             >
               Get In Touch
             </button>
             <button
               onClick={copyEmailToClipboard}
-              className="px-6 py-4 rounded-full bg-slate-900/90 border border-white/15 text-slate-300 font-mono text-sm hover:text-teal-300 hover:border-teal-400 transition-all duration-300 cursor-pointer flex items-center gap-2 shadow-md"
+              className="px-5 py-4 rounded-full bg-slate-900/90 border border-white/15 text-slate-300 font-mono text-sm hover:text-teal-300 hover:border-teal-400 transition-all duration-300 cursor-pointer flex items-center gap-2 shadow-md"
               title="Copy menonabhineet@gmail.com"
             >
               {copiedEmail ? <Check size={16} className="text-teal-400" /> : <Copy size={16} />}
@@ -442,7 +580,7 @@ export default function Page() {
               </div>
             </div>
 
-            {/* Profile Picture Card - Perfectly Centered Framing */}
+            {/* Profile Picture Card */}
             <div className="md:col-span-5 flex justify-center">
               <div className="relative group w-full max-w-[280px]">
                 <div className="relative rounded-3xl p-3 bg-slate-900/90 border border-teal-500/30 shadow-[0_0_35px_rgba(45,212,191,0.2)] group-hover:border-teal-400/70 group-hover:shadow-[0_0_45px_rgba(45,212,191,0.35)] transition-all duration-500">
@@ -481,27 +619,46 @@ export default function Page() {
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
                     <h3 className="text-lg font-bold text-slate-100">
                       {job.title} <span className="text-teal-400">@</span>{" "}
-                      <a
-                        href={job.link}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="hover:underline hover:text-teal-300 transition-colors"
-                      >
-                        {job.company}
-                      </a>
+                      {job.link ? (
+                        <a
+                          href={job.link}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="hover:underline hover:text-teal-300 transition-colors"
+                        >
+                          {job.company}
+                        </a>
+                      ) : (
+                        <span>{job.company}</span>
+                      )}
                     </h3>
                     <span className="font-mono text-xs text-slate-400 bg-slate-800/90 px-3.5 py-1 rounded-full w-fit mt-1 sm:mt-0 border border-white/10">
                       {job.start} — {job.end}
                     </span>
                   </div>
 
-                  {/* Badges */}
+                  {/* Impact Highlights Badges (Quantified Engineering Metrics) */}
+                  {(job as any).impactBadges && (job as any).impactBadges.length > 0 && (
+                    <div className="flex flex-wrap gap-2 my-3.5">
+                      {(job as any).impactBadges.map((badge: string) => (
+                        <span
+                          key={badge}
+                          className="inline-flex items-center gap-1 text-[11px] font-mono font-medium text-teal-300 bg-teal-950/40 border border-teal-500/25 px-2.5 py-1 rounded-lg"
+                        >
+                          <Zap size={11} className="text-teal-400 flex-shrink-0" />
+                          <span>{badge}</span>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Standard Tech Badges */}
                   {job.badges && job.badges.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mb-4">
                       {job.badges.map((badge) => (
                         <span
                           key={badge}
-                          className="text-[11px] font-mono text-teal-300 bg-teal-400/10 px-2.5 py-0.5 rounded-md border border-teal-400/20"
+                          className="text-[11px] font-mono text-slate-300 bg-slate-800/80 px-2.5 py-0.5 rounded-md border border-white/10"
                         >
                           {badge}
                         </span>
@@ -509,6 +666,7 @@ export default function Page() {
                     </div>
                   )}
 
+                  {/* Full Descriptions Preserved */}
                   <ul className="list-none space-y-2.5 text-slate-300 text-sm">
                     {Array.isArray(job.description) ? (
                       job.description.map((point, idx) => (
@@ -566,49 +724,122 @@ export default function Page() {
             </div>
           </div>
 
-          {/* CATEGORY FILTER TABS (UNIFIED DOCK - NO WEIRD OUTLINES) */}
-          <div className="flex justify-center mb-12">
-            <div className="inline-flex items-center gap-1 p-1.5 rounded-full bg-slate-900/95 border border-white/10 shadow-2xl overflow-x-auto max-w-full">
-              {categories.map((cat) => {
-                const isSelected = selectedCategory === cat.id;
-                const count =
-                  cat.id === "all"
-                    ? resumeData.projects.length
-                    : resumeData.projects.filter(
-                        (p) =>
-                          Array.isArray((p as any).categories) &&
-                          (p as any).categories.includes(cat.id)
-                      ).length;
+          {/* SEARCH & FILTER CONTROLS BAR */}
+          <div className="space-y-4 mb-10">
+            {/* Keyword Search Input */}
+            <div className="max-w-md mx-auto relative">
+              <Search
+                size={16}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+              />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setCurrentProjectIndex(0);
+                }}
+                placeholder="Search projects by tech, keyword, or metric (e.g. 'RAG', 'Snowflake', 'Accuracy')..."
+                className="w-full pl-10 pr-10 py-3 rounded-full bg-slate-900/90 border border-white/10 text-slate-200 placeholder-slate-500 text-xs font-mono focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 transition-all shadow-inner"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-200 transition-colors"
+                  title="Clear search"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
 
-                return (
+            {/* Active Skill Filter Pill (if activated) */}
+            {selectedSkillFilter && (
+              <div className="flex justify-center items-center gap-2">
+                <span className="text-xs font-mono text-slate-400">Filtering by skill:</span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-400 text-slate-950 font-mono text-xs font-bold shadow-md">
+                  <span>{selectedSkillFilter}</span>
                   <button
-                    key={cat.id}
-                    onClick={() => handleCategorySelect(cat.id)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-mono transition-all duration-200 whitespace-nowrap cursor-pointer ${
-                      isSelected
-                        ? "bg-teal-400 text-slate-950 font-bold shadow-[0_0_20px_rgba(45,212,191,0.4)]"
-                        : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.06]"
-                    }`}
+                    onClick={() => setSelectedSkillFilter(null)}
+                    className="hover:bg-slate-950/20 rounded-full p-0.5 cursor-pointer"
+                    title="Remove skill filter"
                   >
-                    <span>{cat.label}</span>
-                    <span
-                      className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
+                    <X size={12} />
+                  </button>
+                </span>
+              </div>
+            )}
+
+            {/* Category Filter Tabs */}
+            <div className="flex justify-center">
+              <div className="inline-flex items-center gap-1 p-1.5 rounded-full bg-slate-900/95 border border-white/10 shadow-2xl overflow-x-auto max-w-full">
+                {categories.map((cat) => {
+                  const isSelected = selectedCategory === cat.id;
+                  const count =
+                    cat.id === "all"
+                      ? resumeData.projects.length
+                      : resumeData.projects.filter(
+                          (p) =>
+                            Array.isArray((p as any).categories) &&
+                            (p as any).categories.includes(cat.id)
+                        ).length;
+
+                  return (
+                    <button
+                      key={cat.id}
+                      onClick={() => handleCategorySelect(cat.id)}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-mono transition-all duration-200 whitespace-nowrap cursor-pointer ${
                         isSelected
-                          ? "bg-slate-950/30 text-slate-950"
-                          : "bg-slate-800 text-slate-400"
+                          ? "bg-teal-400 text-slate-950 font-bold shadow-[0_0_20px_rgba(45,212,191,0.4)]"
+                          : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.06]"
                       }`}
                     >
-                      {count}
-                    </span>
-                  </button>
-                );
-              })}
+                      <span>{cat.label}</span>
+                      <span
+                        className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
+                          isSelected
+                            ? "bg-slate-950/30 text-slate-950"
+                            : "bg-slate-800 text-slate-400"
+                        }`}
+                      >
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Result Counter */}
+            <div className="text-center">
+              <span className="text-[11px] font-mono text-slate-500">
+                Showing {filteredProjects.length} of {resumeData.projects.length} projects
+              </span>
             </div>
           </div>
 
-          {/* VIEW MODE 1: 3D PERSPECTIVE CAROUSEL */}
-          {projectViewMode === "3d" ? (
-            <div className="relative w-full max-w-4xl mx-auto h-[650px] flex items-center justify-center">
+          {/* EMPTY STATE */}
+          {filteredProjects.length === 0 ? (
+            <div className="bg-slate-900/60 border border-white/10 rounded-3xl p-12 text-center max-w-lg mx-auto">
+              <FolderGit2 size={36} className="mx-auto text-slate-500 mb-3" />
+              <h3 className="text-base font-bold text-slate-200 font-mono">No matching projects found</h3>
+              <p className="text-xs text-slate-400 mt-1 mb-5">
+                Try searching for a different keyword or clearing active filters.
+              </p>
+              <button
+                onClick={() => {
+                  setSearchQuery("");
+                  setSelectedCategory("all");
+                  setSelectedSkillFilter(null);
+                }}
+                className="px-4 py-2 rounded-full bg-teal-400 text-slate-950 text-xs font-mono font-bold hover:bg-teal-300 transition-all cursor-pointer"
+              >
+                Reset All Filters
+              </button>
+            </div>
+          ) : projectViewMode === "3d" ? (
+            /* VIEW MODE 1: 3D PERSPECTIVE CAROUSEL */
+            <div className="relative w-full max-w-4xl mx-auto h-[670px] flex items-center justify-center">
               {filteredProjects.length > 1 && (
                 <>
                   {/* Left Button */}
@@ -676,18 +907,18 @@ export default function Page() {
                   return (
                     <div
                       key={project.title}
-                      className="absolute top-0 w-[300px] md:w-[390px] h-[590px] transition-all duration-500 ease-in-out"
+                      className="absolute top-0 w-[310px] md:w-[410px] h-[630px] transition-all duration-500 ease-in-out"
                       style={{
                         zIndex: zIndex,
                         opacity: opacity,
                         transform: `translateX(${translateX}) scale(${scale}) rotateY(${rotateY})`,
                       }}
                     >
-                      <div className="w-full h-full bg-slate-900/95 backdrop-blur-2xl border border-teal-500/25 rounded-3xl p-8 shadow-2xl flex flex-col relative overflow-hidden group hover:border-teal-400/60 transition-all">
+                      <div className="w-full h-full bg-slate-900/95 backdrop-blur-2xl border border-teal-500/25 rounded-3xl p-7 shadow-2xl flex flex-col relative overflow-hidden group hover:border-teal-400/60 transition-all">
                         {/* Top Bar */}
-                        <div className="flex justify-between items-center mb-6">
+                        <div className="flex justify-between items-center mb-4">
                           <div className="p-3 rounded-2xl bg-teal-400/10 text-teal-400 border border-teal-400/20 shadow-inner">
-                            <FolderGit2 size={26} />
+                            <FolderGit2 size={24} />
                           </div>
                           {project.link.href ? (
                             <a
@@ -706,8 +937,8 @@ export default function Page() {
                           )}
                         </div>
 
-                        {/* Content */}
-                        <h3 className="text-2xl font-bold text-slate-100 mb-4 leading-tight group-hover:text-teal-300 transition-colors">
+                        {/* Title */}
+                        <h3 className="text-xl font-bold text-slate-100 mb-2 leading-tight group-hover:text-teal-300 transition-colors">
                           {project.link.href ? (
                             <a
                               href={project.link.href}
@@ -722,21 +953,40 @@ export default function Page() {
                           )}
                         </h3>
 
+                        {/* Quantified Impact Highlights Badges */}
+                        {(project as any).impactBadges && (project as any).impactBadges.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 mb-3">
+                            {(project as any).impactBadges.map((badge: string) => (
+                              <span
+                                key={badge}
+                                className="inline-flex items-center gap-1 text-[10px] font-mono text-teal-300 bg-teal-950/50 border border-teal-500/30 px-2 py-0.5 rounded-md"
+                              >
+                                <Zap size={10} className="text-teal-400 flex-shrink-0" />
+                                <span>{badge}</span>
+                              </span>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Description */}
                         <div className="flex-grow overflow-y-auto pr-2 custom-scrollbar">
-                          <p className="text-slate-300 leading-relaxed text-sm">
+                          <p className="text-slate-300 leading-relaxed text-xs sm:text-sm">
                             {project.description}
                           </p>
                         </div>
 
-                        {/* Tech Stack */}
-                        <div className="mt-6 pt-6 border-t border-white/[0.08]">
+                        {/* Tech Stack Badges */}
+                        <div className="mt-4 pt-4 border-t border-white/[0.08]">
                           <ul className="flex flex-wrap gap-1.5 font-mono text-xs">
                             {project.techStack.map((tech) => (
-                              <li
-                                key={tech}
-                                className="text-teal-300 bg-teal-400/10 border border-teal-400/20 px-2.5 py-1 rounded-lg text-[11px]"
-                              >
-                                {tech}
+                              <li key={tech}>
+                                <button
+                                  onClick={() => handleSkillClick(tech)}
+                                  className="text-teal-300 bg-teal-400/10 border border-teal-400/20 hover:border-teal-400 hover:bg-teal-400/20 px-2 py-0.5 rounded-lg text-[10px] transition-colors cursor-pointer"
+                                  title={`Filter projects by ${tech}`}
+                                >
+                                  {tech}
+                                </button>
                               </li>
                             ))}
                           </ul>
@@ -757,9 +1007,9 @@ export default function Page() {
                 >
                   <div>
                     {/* Header */}
-                    <div className="flex justify-between items-center mb-5">
+                    <div className="flex justify-between items-center mb-4">
                       <div className="p-3 rounded-2xl bg-teal-400/10 text-teal-400 border border-teal-400/20">
-                        <FolderGit2 size={24} />
+                        <FolderGit2 size={22} />
                       </div>
                       {project.link.href ? (
                         <a
@@ -778,7 +1028,7 @@ export default function Page() {
                       )}
                     </div>
 
-                    <h3 className="text-xl font-bold text-slate-100 mb-3 group-hover:text-teal-300 transition-colors">
+                    <h3 className="text-xl font-bold text-slate-100 mb-2 group-hover:text-teal-300 transition-colors">
                       {project.link.href ? (
                         <a href={project.link.href} target="_blank" rel="noreferrer" className="hover:underline">
                           {project.title}
@@ -787,6 +1037,21 @@ export default function Page() {
                         <span>{project.title}</span>
                       )}
                     </h3>
+
+                    {/* Quantified Impact Highlights Badges */}
+                    {(project as any).impactBadges && (project as any).impactBadges.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 mb-3.5">
+                        {(project as any).impactBadges.map((badge: string) => (
+                          <span
+                            key={badge}
+                            className="inline-flex items-center gap-1 text-[11px] font-mono text-teal-300 bg-teal-950/40 border border-teal-500/25 px-2.5 py-0.5 rounded-md"
+                          >
+                            <Zap size={10} className="text-teal-400 flex-shrink-0" />
+                            <span>{badge}</span>
+                          </span>
+                        ))}
+                      </div>
+                    )}
 
                     <p className="text-slate-300 text-sm leading-relaxed mb-6">
                       {project.description}
@@ -797,11 +1062,14 @@ export default function Page() {
                   <div className="pt-4 border-t border-white/[0.08]">
                     <ul className="flex flex-wrap gap-1.5 font-mono text-xs">
                       {project.techStack.map((tech) => (
-                        <li
-                          key={tech}
-                          className="text-teal-300 bg-teal-400/10 border border-teal-400/20 px-2.5 py-0.5 rounded-md text-[11px]"
-                        >
-                          {tech}
+                        <li key={tech}>
+                          <button
+                            onClick={() => handleSkillClick(tech)}
+                            className="text-teal-300 bg-teal-400/10 border border-teal-400/20 hover:border-teal-400 hover:bg-teal-400/20 px-2 py-0.5 rounded-md text-[11px] transition-colors cursor-pointer"
+                            title={`Filter projects by ${tech}`}
+                          >
+                            {tech}
+                          </button>
                         </li>
                       ))}
                     </ul>
@@ -812,7 +1080,7 @@ export default function Page() {
           )}
 
           {/* Pagination Dots in 3D Mode */}
-          {projectViewMode === "3d" && (
+          {projectViewMode === "3d" && filteredProjects.length > 0 && (
             <div className="flex flex-col items-center gap-3 mt-4">
               <div className="flex gap-2 items-center">
                 {filteredProjects.map((_, idx) => (
@@ -862,12 +1130,18 @@ export default function Page() {
           </div>
         </section>
 
-        {/* 05. SKILLS */}
+        {/* 05. SKILLS & EVIDENCE CROSS-LINKING */}
         <section id="skills" className="py-20 sm:py-32">
-          <h2 className="text-3xl font-bold text-slate-100 mb-12 flex items-center gap-4">
-            Skills &amp; Competencies
-            <span className="h-px flex-1 bg-white/10 max-w-xs"></span>
-          </h2>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-12">
+            <h2 className="text-3xl font-bold text-slate-100 flex items-center gap-4">
+              Skills &amp; Competencies
+              <span className="h-px flex-1 bg-white/10 max-w-xs"></span>
+            </h2>
+            <span className="text-xs font-mono text-teal-400/80">
+              Tip: Click any skill to inspect matching projects
+            </span>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[
               {
@@ -902,22 +1176,31 @@ export default function Page() {
                   <h3 className="text-slate-100 font-bold text-lg">{category.title}</h3>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {category.skills.map((skill) => (
-                    <span
-                      key={skill}
-                      className="px-3.5 py-1.5 text-xs font-mono text-teal-300 bg-slate-950/80 rounded-xl border border-white/10 hover:border-teal-400/50 hover:text-teal-200 transition-all duration-200"
-                    >
-                      <span className="text-teal-400 mr-1.5 font-bold">▹</span>
-                      {skill}
-                    </span>
-                  ))}
+                  {category.skills.map((skill) => {
+                    const isFilterActive = selectedSkillFilter === skill;
+                    return (
+                      <button
+                        key={skill}
+                        onClick={() => handleSkillClick(skill)}
+                        className={`px-3.5 py-1.5 text-xs font-mono rounded-xl border transition-all duration-200 cursor-pointer ${
+                          isFilterActive
+                            ? "bg-teal-400 text-slate-950 font-bold border-teal-400 shadow-[0_0_15px_rgba(45,212,191,0.5)]"
+                            : "text-teal-300 bg-slate-950/80 border-white/10 hover:border-teal-400/50 hover:text-teal-200"
+                        }`}
+                        title={`Click to view projects using ${skill}`}
+                      >
+                        <span className="text-teal-400 mr-1.5 font-bold">▹</span>
+                        {skill}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             ))}
           </div>
         </section>
 
-        {/* 06. CONTACT - CLEAN, POLISHED PILL BUTTONS */}
+        {/* 06. CONTACT */}
         <section
           id="contact"
           className="py-20 sm:py-32 text-center max-w-2xl mx-auto mb-16"
@@ -929,7 +1212,7 @@ export default function Page() {
               Whether you have an opportunity in Data Engineering, AI/LLMs, or Full-Stack Systems, or want to discuss engineering challenges, my inbox is always open.
             </p>
 
-            {/* Direct Contact Options - Clean Solid Pills */}
+            {/* Direct Contact Options */}
             <div className="flex flex-wrap items-center justify-center gap-3 mb-10">
               <button
                 onClick={copyEmailToClipboard}
@@ -937,6 +1220,13 @@ export default function Page() {
               >
                 {copiedEmail ? <Check size={14} className="text-teal-400" /> : <Copy size={14} className="text-teal-400" />}
                 <span>{copiedEmail ? "Email Copied!" : resumeData.contact.email}</span>
+              </button>
+              <button
+                onClick={() => setIsResumeModalOpen(true)}
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-slate-950 hover:bg-slate-800 border border-white/10 hover:border-teal-400 text-xs font-mono text-slate-200 hover:text-teal-300 transition-all shadow-md cursor-pointer"
+              >
+                <FileText size={14} className="text-teal-400" />
+                <span>Resume PDF</span>
               </button>
               <a
                 href="https://linkedin.com/in/menonabhineet"
@@ -962,7 +1252,8 @@ export default function Page() {
           </div>
         </section>
 
-        <footer className="pb-12 text-center text-xs text-slate-500 font-mono hover:text-teal-400 transition-colors">
+        {/* FOOTER */}
+        <footer className="pb-16 text-center text-xs text-slate-500 font-mono hover:text-teal-400 transition-colors">
           <a
             href="https://github.com/menonabhineet/portfolio"
             target="_blank"
@@ -972,6 +1263,36 @@ export default function Page() {
           </a>
         </footer>
       </main>
+
+      {/* FLOATING COMMAND PALETTE LAUNCHER FOR DESKTOP */}
+      <div className="fixed bottom-6 right-6 z-40 hidden md:block">
+        <button
+          onClick={() => setIsCommandPaletteOpen(true)}
+          className="group flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-slate-900/90 hover:bg-slate-800 border border-teal-500/30 hover:border-teal-400 text-slate-300 hover:text-teal-300 shadow-[0_0_25px_rgba(45,212,191,0.15)] hover:shadow-[0_0_30px_rgba(45,212,191,0.3)] backdrop-blur-xl transition-all cursor-pointer"
+          title="Open Command Palette"
+        >
+          <Search size={14} className="text-teal-400 group-hover:scale-110 transition-transform" />
+          <span className="text-xs font-mono font-medium">Commands</span>
+          <kbd className="px-1.5 py-0.5 rounded bg-slate-950 border border-white/10 text-[10px] font-mono text-teal-400">
+            Ctrl+K
+          </kbd>
+        </button>
+      </div>
+
+      {/* IN-APP RESUME PDF MODAL */}
+      <ResumeModal
+        isOpen={isResumeModalOpen}
+        onClose={() => setIsResumeModalOpen(false)}
+        resumeUrl="./Abhineet_Menon_Resume.pdf"
+      />
+
+      {/* COMMAND PALETTE MODAL */}
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        onOpenResume={() => setIsResumeModalOpen(true)}
+        onSelectProject={handleSelectProjectFromPalette}
+      />
     </div>
   );
 }
