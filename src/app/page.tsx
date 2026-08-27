@@ -38,7 +38,7 @@ import {
   TrendingUp,
   Zap,
 } from "lucide-react";
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 
 // --- CONTACT FORM COMPONENT ---
 const ContactForm = () => {
@@ -261,14 +261,18 @@ export default function Page() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [nextProject, prevProject, projectViewMode, isCommandPaletteOpen, isResumeModalOpen]);
 
-  // --- MOUSE SPOTLIGHT (Direct CSS Variable Injection - 0 Re-renders) ---
+  const spotlightRef = useRef<HTMLDivElement>(null);
+
+  // --- MOUSE SPOTLIGHT (Direct Targeted CSS Update - 0 Document Invalidation) ---
   useEffect(() => {
     let rafId: number;
     const handleMouseMove = (event: MouseEvent) => {
       cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(() => {
-        document.documentElement.style.setProperty("--mouse-x", `${event.clientX}px`);
-        document.documentElement.style.setProperty("--mouse-y", `${event.clientY}px`);
+        if (spotlightRef.current) {
+          spotlightRef.current.style.setProperty("--mouse-x", `${event.clientX}px`);
+          spotlightRef.current.style.setProperty("--mouse-y", `${event.clientY}px`);
+        }
       });
     };
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
@@ -278,12 +282,19 @@ export default function Page() {
     };
   }, []);
 
-  // --- SCROLL HANDLER ---
+  // --- SCROLL HANDLER (Passive + RAF Throttled) ---
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setScrolled(window.scrollY > 40);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 40);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -318,10 +329,10 @@ export default function Page() {
   return (
     <div className="relative min-h-screen bg-[#050814] font-sans selection:bg-teal-400 selection:text-slate-950 text-slate-400 overflow-x-hidden">
       {/* AMBIENT ACCENTS */}
-      <div className="fixed top-0 left-1/4 w-96 h-96 bg-teal-500/[0.03] rounded-full blur-[140px] pointer-events-none -z-10" />
-      <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-indigo-500/[0.02] rounded-full blur-[140px] pointer-events-none -z-10" />
+      <div className="fixed top-0 left-1/4 w-96 h-96 bg-teal-500/[0.03] rounded-full blur-[140px] pointer-events-none -z-10 transform-gpu" style={{ transform: "translateZ(0)" }} />
+      <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-indigo-500/[0.02] rounded-full blur-[140px] pointer-events-none -z-10 transform-gpu" style={{ transform: "translateZ(0)" }} />
 
-      <div className="spotlight-bg pointer-events-none fixed inset-0 z-30 transition duration-300 lg:absolute" />
+      <div ref={spotlightRef} className="spotlight-bg pointer-events-none fixed inset-0 z-30 transition-opacity duration-300 lg:absolute" />
       <MatrixBackground />
 
       {/* STICKY HEADER */}
@@ -455,9 +466,12 @@ export default function Page() {
 
       <main className="relative z-10 mx-auto max-w-5xl px-6 md:px-12 lg:px-0">
         {/* HERO SECTION */}
-        <section id="hero" className="min-h-screen flex flex-col justify-center items-start pt-28 pb-20">
+        <section id="hero" className="min-h-screen flex flex-col justify-center items-start pt-28 pb-20 relative">
+          {/* Ambient Contrast Shield - Ensures text is 100% visible and crisp against matrix background */}
+          <div className="absolute -left-12 sm:-left-24 top-1/4 bottom-1/4 w-full max-w-3xl -z-10 bg-[#050814]/85 blur-[120px] rounded-full pointer-events-none" />
+
           {/* Status Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/25 text-teal-300 text-xs font-mono mb-8 backdrop-blur-md">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/25 text-teal-300 text-xs font-mono mb-8 backdrop-blur-md shadow-lg">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-400"></span>
@@ -465,18 +479,18 @@ export default function Page() {
             <span>Open to Relocation • MS in Computer Science @ UIC</span>
           </div>
 
-          <p className="text-teal-400 font-mono text-sm md:text-base mb-3 tracking-wider font-semibold">
+          <p className="text-teal-400 font-mono text-sm md:text-base mb-3 tracking-wider font-semibold drop-shadow-[0_2px_8px_rgba(5,8,20,0.9)]">
             Hi, my name is
           </p>
-          <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight text-white mb-4 leading-none">
+          <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight text-white mb-4 leading-none drop-shadow-[0_4px_24px_rgba(5,8,20,0.95)]">
             <span className="bg-gradient-to-r from-white via-slate-100 to-teal-300 bg-clip-text text-transparent">
               {resumeData.name}
             </span>
           </h1>
-          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-slate-300 mb-6 tracking-tight leading-tight">
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-slate-100 mb-6 tracking-tight leading-tight drop-shadow-[0_2px_12px_rgba(5,8,20,0.95)]">
             Data Engineer &amp; Full-Stack AI Developer.
           </h2>
-          <p className="text-base sm:text-lg text-slate-300 mb-10 max-w-2xl leading-relaxed">
+          <p className="text-base sm:text-lg text-slate-200 mb-10 max-w-2xl leading-relaxed drop-shadow-[0_2px_10px_rgba(5,8,20,0.95)] font-normal">
             Master&apos;s student in Computer Science at UIC (4.0 GPA) with 2+ years of enterprise data engineering experience at LTIMindtree. I build high-performance data systems, scalable cloud ETL pipelines, and intelligent AI/RAG applications.
           </p>
 
@@ -534,7 +548,7 @@ export default function Page() {
 
         {/* 01. ABOUT */}
         <section id="about" className="py-20 sm:py-32">
-          <h2 className="text-3xl font-bold text-slate-100 mb-10 flex items-center gap-4">
+          <h2 className="text-3xl font-bold text-slate-100 mb-10 flex items-center gap-4 drop-shadow-[0_2px_12px_rgba(5,8,20,0.95)]">
             About Me
             <span className="h-px flex-1 bg-white/10 max-w-xs"></span>
           </h2>
@@ -606,7 +620,7 @@ export default function Page() {
 
         {/* 02. EXPERIENCE */}
         <section id="experience" className="py-20 sm:py-32 max-w-3xl">
-          <h2 className="text-3xl font-bold text-slate-100 mb-12 flex items-center gap-4">
+          <h2 className="text-3xl font-bold text-slate-100 mb-12 flex items-center gap-4 drop-shadow-[0_2px_12px_rgba(5,8,20,0.95)]">
             Experience
             <span className="h-px flex-1 bg-white/10 max-w-xs"></span>
           </h2>
@@ -688,7 +702,7 @@ export default function Page() {
         {/* 03. PROJECTS SECTION */}
         <section id="projects" className="py-20 sm:py-32">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-            <h2 className="text-3xl font-bold text-slate-100 flex items-center gap-4">
+            <h2 className="text-3xl font-bold text-slate-100 flex items-center gap-4 drop-shadow-[0_2px_12px_rgba(5,8,20,0.95)]">
               Featured Projects
               <span className="h-px flex-1 bg-white/10 max-w-xs"></span>
             </h2>
@@ -1105,7 +1119,7 @@ export default function Page() {
 
         {/* 04. EDUCATION */}
         <section id="education" className="py-20 sm:py-32 max-w-3xl">
-          <h2 className="text-3xl font-bold text-slate-100 mb-12 flex items-center gap-4">
+          <h2 className="text-3xl font-bold text-slate-100 mb-12 flex items-center gap-4 drop-shadow-[0_2px_12px_rgba(5,8,20,0.95)]">
             Education
             <span className="h-px flex-1 bg-white/10 max-w-xs"></span>
           </h2>
@@ -1133,7 +1147,7 @@ export default function Page() {
         {/* 05. SKILLS & EVIDENCE CROSS-LINKING */}
         <section id="skills" className="py-20 sm:py-32">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-12">
-            <h2 className="text-3xl font-bold text-slate-100 flex items-center gap-4">
+            <h2 className="text-3xl font-bold text-slate-100 flex items-center gap-4 drop-shadow-[0_2px_12px_rgba(5,8,20,0.95)]">
               Skills &amp; Competencies
               <span className="h-px flex-1 bg-white/10 max-w-xs"></span>
             </h2>
@@ -1207,7 +1221,7 @@ export default function Page() {
         >
           <div className="bg-slate-900/90 border border-white/[0.08] rounded-3xl p-8 sm:p-12 shadow-2xl">
             <p className="text-teal-400 font-mono mb-3 text-sm tracking-wide font-semibold">What&apos;s Next?</p>
-            <h2 className="text-4xl sm:text-5xl font-extrabold text-white mb-4">Get In Touch</h2>
+            <h2 className="text-4xl sm:text-5xl font-extrabold text-white mb-4 drop-shadow-[0_2px_12px_rgba(5,8,20,0.95)]">Get In Touch</h2>
             <p className="text-base text-slate-300 mb-8 leading-relaxed max-w-lg mx-auto">
               Whether you have an opportunity in Data Engineering, AI/LLMs, or Full-Stack Systems, or want to discuss engineering challenges, my inbox is always open.
             </p>
