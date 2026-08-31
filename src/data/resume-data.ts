@@ -44,6 +44,46 @@ export const resumeData = {
   ],
   work: [
     {
+      company: "Shop Scout",
+      link: "",
+      badges: ["Python", "asyncio", "C#", ".NET 8", "AWS", "SQL Server"],
+      impactBadges: [
+        "2.49x Throughput Lift",
+        "2.7M Rows Recovered",
+        "51% Block Rate Drop",
+        "Idempotent Schemas",
+      ],
+      title: "Backend Engineer Intern",
+      start: "Jul 2026",
+      end: "Present",
+      description: [
+        "Re-architected a single-threaded Python scraping consumer into an asyncio dual-lane scheduler, decoupling headless-Chrome scraping from third-party APIs to increase throughput by 2.49x (to 464 products/hour).",
+        "Built C# / .NET 8 end-of-run reconciliation pipelines integrating AWS SQS, S3, and SQL Server to generate capture-rate KPIs, custom CloudWatch metrics, and SNS alarms.",
+        "Reconstructed 2.7M historical outcome rows spanning 21 months from S3 object logs, and instrumented the pipeline with JSONL logging for robust per-product reconciliation.",
+        "Identified and resolved three latent concurrency defects, root-caused anti-bot blocking (PerimeterX, Cloudflare) to cut Access Denied results by 51%, and designed idempotent SQL Server schemas."
+      ],
+    },
+    {
+      company: "BalanX Bio",
+      link: "",
+      badges: ["Python", "ChromaDB", "SQLite", "Redis", "Groq LLM", "Affective Computing"],
+      impactBadges: [
+        ">99.9% Latency Drop",
+        "$0 Token Cost",
+        "Thread-Safe Concurrency",
+        "Tri-Modal Retrieval",
+      ],
+      title: "AI Intern",
+      start: "Aug 2026",
+      end: "Present",
+      description: [
+        "Architected an asynchronous background worker pool in Python to decouple real-time emotion extraction from cloud LLM vector embedding, dropping user-turn latency from 1,500ms to <1.0ms.",
+        "Engineered a local deterministic semantic entity extractor with isolated sliding-window buffers, eliminating cloud network latency and completely resolving cross-domain pattern contamination.",
+        "Designed a continuous 3D Affective Space (VAD) clustering engine with a noise-tolerant sliding window and physiological telemetry corroboration to validate stress biomarkers.",
+        "Implemented a tri-modal hybrid memory retrieval algorithm (Semantic + Affective + Ebbinghaus Recency) and migrated state persistence to a thread-safe SQLite database for robust concurrency."
+      ],
+    },
+    {
       company: "LTIMindtree",
       link: "https://www.ltimindtree.com",
       badges: ["Snowflake", "Azure ADF", "SQL", "Python"],
@@ -57,10 +97,10 @@ export const resumeData = {
       start: "Aug 2022",
       end: "Mar 2024",
       description: [
-        "Engineered massive-scale ETL pipelines to migrate legacy data from SQL Server to Snowflake, achieving a 20% reduction in reporting runtime.",
-        "Spearheaded the optimization of Snowflake query logic, cutting data retrieval latency by up to 40% for critical business dashboards.",
-        "Led a 10-member team of interns, managing sprint lifecycles and removing technical blockers to ensure 100% on-time delivery of milestones.",
-        "Designed incremental-load pipelines using Azure Data Factory (ADF) to ensure real-time data availability for analytics teams.",
+        "Engineered massive-scale ETL pipelines to migrate legacy data from SQL Server to Snowflake, achieving a 20% reduction in reporting runtime and improving overall data reliability.",
+        "Spearheaded the optimization of complex Snowflake query logic and materialized views, cutting data retrieval latency by up to 40% for critical business dashboards.",
+        "Led a 10-member cross-functional team of interns, managing end-to-end sprint lifecycles and aggressively removing technical blockers to ensure 100% on-time delivery of milestones.",
+        "Architected and deployed incremental-load pipelines using Azure Data Factory (ADF), guaranteeing real-time data availability and consistency for downstream analytics teams.",
       ],
     },
     {
@@ -76,9 +116,9 @@ export const resumeData = {
       start: "May 2021",
       end: "Sep 2021",
       description: [
-        "Revamped the company's core web platform, implementing responsive design principles and SEO strategies that drove a 30% increase in organic traffic.",
-        "Hardened site security by customizing third-party plugins and implementing strict validation protocols.",
-        "Optimized asset delivery and caching strategies to significantly reduce page load times.",
+        "Revamped the company's core web platform from the ground up, implementing responsive design principles, modern UI/UX, and technical SEO strategies that drove a 30% increase in organic traffic.",
+        "Hardened site security by auditing and customizing third-party plugins, establishing strict validation protocols, and mitigating common web vulnerabilities.",
+        "Optimized global asset delivery and caching strategies via CDN integrations, significantly reducing page load times and improving Lighthouse performance scores.",
       ],
     },
     {
@@ -94,9 +134,9 @@ export const resumeData = {
       start: "Oct 2020",
       end: "Nov 2020",
       description: [
-        "Architected a custom PHP admin panel basically a CMS for the National Institute of Hospitality Management, streamlining content updates by 40%.",
-        "Developed a centralized dashboard integrating real-time traffic analytics, student enrollment data, and lead management.",
-        "Refactored and normalized the existing database schema, eliminating redundancy and improving query performance by 30%.",
+        "Architected a custom PHP-based Content Management System (CMS) for the National Institute of Hospitality Management, streamlining content updates by 40% for non-technical staff.",
+        "Developed a centralized administrative dashboard integrating real-time traffic analytics, student enrollment data, and automated lead management workflows.",
+        "Refactored and normalized the legacy MySQL database schema, eliminating data redundancy and utilizing proper indexing to improve overall query performance by 30%.",
       ],
     },
   ],
