@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     description:
       "Official portfolio of Abhineet Menon — Master's in Computer Science student at UIC (4.0 GPA), ex-Senior Data Engineer at LTIMindtree. Specializing in AI/LLMs, RAG, Distributed Systems, and Full-Stack Engineering.",
     url: "https://menonabhineet.github.io/portfolio",
-    siteName: "Abhineet Menon Portfolio",
+    siteName: "Portfolio - Abhineet Menon",
     images: [
       {
         url: "/profile.jpg",
@@ -139,7 +139,8 @@ const jsonLd = {
       "@type": "WebSite",
       "@id": "https://menonabhineet.github.io/portfolio/#website",
       "url": "https://menonabhineet.github.io/portfolio",
-      "name": "Abhineet Menon Portfolio",
+      "name": "Portfolio - Abhineet Menon",
+      "alternateName": ["Abhineet Menon Portfolio", "Abhineet Menon"],
       "description":
         "Portfolio of Abhineet Menon — MS in Computer Science student at UIC, Data Engineer, and Full-Stack Developer.",
       "publisher": {
@@ -173,6 +174,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <link rel="icon" type="image/svg+xml" href="/portfolio/favicon.svg" />
       </head>
       <body className={`${inter.className} bg-[#0b1120] text-slate-100 antialiased selection:bg-teal-400 selection:text-slate-950`}>
         {children}

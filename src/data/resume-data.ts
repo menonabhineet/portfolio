@@ -45,7 +45,7 @@ export const resumeData = {
   work: [
     {
       company: "Shop Scout",
-      link: "",
+      link: "https://www.shoppingwithscout.com/",
       badges: ["Python", "asyncio", "C#", ".NET 8", "AWS", "SQL Server"],
       impactBadges: [
         "2.49x Throughput Lift",
@@ -65,7 +65,7 @@ export const resumeData = {
     },
     {
       company: "BalanX Bio",
-      link: "",
+      link: "https://www.balanxbio.com/",
       badges: ["Python", "ChromaDB", "SQLite", "Redis", "Groq LLM", "Affective Computing"],
       impactBadges: [
         ">99.9% Latency Drop",
