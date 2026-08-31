@@ -1,4 +1,4 @@
-# Abhineet Menon — Portfolio
+# Abhineet Menon - Portfolio
 
 > **Data Engineer & Full-Stack AI Developer**  
 > MS in Computer Science @ University of Illinois Chicago (4.0 GPA)

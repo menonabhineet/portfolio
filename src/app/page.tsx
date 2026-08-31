@@ -4,6 +4,7 @@ import { resumeData } from "@/data/resume-data";
 import { MatrixBackground } from "@/components/MatrixBackground";
 import { ResumeModal } from "@/components/ResumeModal";
 import { CommandPalette } from "@/components/CommandPalette";
+import { ViewCounter } from "@/components/ViewCounter";
 import { fuzzyMatchItem } from "@/lib/fuzzy";
 import {
   Github,
@@ -595,8 +596,8 @@ export default function Page() {
             </div>
 
             {/* Profile Picture Card */}
-            <div className="md:col-span-5 flex justify-center">
-              <div className="relative group w-full max-w-[280px]">
+            <div className="hidden md:flex md:col-span-5 justify-center">
+              <div className="relative group w-full max-w-[180px] sm:max-w-[220px] md:max-w-[280px]">
                 <div className="relative rounded-3xl p-3 bg-slate-900/90 border border-teal-500/30 shadow-[0_0_35px_rgba(45,212,191,0.2)] group-hover:border-teal-400/70 group-hover:shadow-[0_0_45px_rgba(45,212,191,0.35)] transition-all duration-500">
                   <div className="relative rounded-2xl overflow-hidden aspect-[4/5] bg-slate-800">
                     <img
@@ -629,9 +630,9 @@ export default function Page() {
               <div key={job.company} className="relative pl-8 group">
                 <div className="absolute -left-[5px] top-2 h-2.5 w-2.5 rounded-full bg-slate-800 ring-4 ring-[#050814] group-hover:bg-teal-400 group-hover:ring-teal-400/20 transition-all" />
                 
-                <div className="bg-slate-900/90 border border-white/[0.08] hover:border-teal-400/40 rounded-3xl p-8 transition-all shadow-xl">
+                <div className="bg-slate-900/90 border border-white/[0.08] hover:border-teal-400/40 rounded-3xl p-4 sm:p-6 md:p-8 transition-all shadow-xl">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
-                    <h3 className="text-lg font-bold text-slate-100">
+                    <h3 className="text-base md:text-lg font-bold text-slate-100">
                       {job.title} <span className="text-teal-400">@</span>{" "}
                       {job.link ? (
                         <a
@@ -646,7 +647,7 @@ export default function Page() {
                         <span>{job.company}</span>
                       )}
                     </h3>
-                    <span className="font-mono text-xs text-slate-400 bg-slate-800/90 px-3.5 py-1 rounded-full w-fit mt-1 sm:mt-0 border border-white/10">
+                    <span className="font-mono text-[10px] sm:text-xs text-slate-400 bg-slate-800/90 px-2.5 py-0.5 sm:px-3.5 sm:py-1 rounded-full w-fit mt-1 sm:mt-0 border border-white/10">
                       {job.start} — {job.end}
                     </span>
                   </div>
@@ -681,7 +682,7 @@ export default function Page() {
                   )}
 
                   {/* Full Descriptions Preserved */}
-                  <ul className="list-none space-y-2.5 text-slate-300 text-sm">
+                  <ul className="list-none space-y-2 sm:space-y-2.5 text-slate-300 text-xs sm:text-sm">
                     {Array.isArray(job.description) ? (
                       job.description.map((point, idx) => (
                         <li key={idx} className="relative pl-5 leading-relaxed">
@@ -853,7 +854,7 @@ export default function Page() {
             </div>
           ) : projectViewMode === "3d" ? (
             /* VIEW MODE 1: 3D PERSPECTIVE CAROUSEL */
-            <div className="relative w-full max-w-4xl mx-auto h-[670px] flex items-center justify-center">
+            <div className="relative w-full max-w-4xl mx-auto h-[560px] md:h-[670px] flex items-center justify-center">
               {filteredProjects.length > 1 && (
                 <>
                   {/* Left Button */}
@@ -921,14 +922,14 @@ export default function Page() {
                   return (
                     <div
                       key={project.title}
-                      className="absolute top-0 w-[310px] md:w-[410px] h-[630px] transition-all duration-500 ease-in-out"
+                      className="absolute top-0 w-[300px] sm:w-[340px] md:w-[410px] h-[520px] md:h-[630px] transition-all duration-500 ease-in-out"
                       style={{
                         zIndex: zIndex,
                         opacity: opacity,
                         transform: `translateX(${translateX}) scale(${scale}) rotateY(${rotateY})`,
                       }}
                     >
-                      <div className="w-full h-full bg-slate-900/95 backdrop-blur-2xl border border-teal-500/25 rounded-3xl p-7 shadow-2xl flex flex-col relative overflow-hidden group hover:border-teal-400/60 transition-all">
+                      <div className="w-full h-full bg-slate-900/95 backdrop-blur-2xl border border-teal-500/25 rounded-3xl p-5 md:p-7 shadow-2xl flex flex-col relative overflow-hidden group hover:border-teal-400/60 transition-all">
                         {/* Top Bar */}
                         <div className="flex justify-between items-center mb-4">
                           <div className="p-3 rounded-2xl bg-teal-400/10 text-teal-400 border border-teal-400/20 shadow-inner">
@@ -952,7 +953,7 @@ export default function Page() {
                         </div>
 
                         {/* Title */}
-                        <h3 className="text-xl font-bold text-slate-100 mb-2 leading-tight group-hover:text-teal-300 transition-colors">
+                        <h3 className="text-lg md:text-xl font-bold text-slate-100 mb-2 leading-tight group-hover:text-teal-300 transition-colors">
                           {project.link.href ? (
                             <a
                               href={project.link.href}
@@ -1017,7 +1018,7 @@ export default function Page() {
               {filteredProjects.map((project) => (
                 <div
                   key={project.title}
-                  className="bg-slate-900/90 border border-white/[0.08] hover:border-teal-400/40 rounded-3xl p-8 flex flex-col justify-between shadow-xl group transition-all duration-300 hover:-translate-y-1.5"
+                  className="bg-slate-900/90 border border-white/[0.08] hover:border-teal-400/40 rounded-3xl p-6 md:p-8 flex flex-col justify-between shadow-xl group transition-all duration-300 hover:-translate-y-1.5"
                 >
                   <div>
                     {/* Header */}
@@ -1042,7 +1043,7 @@ export default function Page() {
                       )}
                     </div>
 
-                    <h3 className="text-xl font-bold text-slate-100 mb-2 group-hover:text-teal-300 transition-colors">
+                    <h3 className="text-lg md:text-xl font-bold text-slate-100 mb-2 group-hover:text-teal-300 transition-colors">
                       {project.link.href ? (
                         <a href={project.link.href} target="_blank" rel="noreferrer" className="hover:underline">
                           {project.title}
@@ -1127,11 +1128,11 @@ export default function Page() {
             {resumeData.education.map((edu) => (
               <div
                 key={edu.school}
-                className="bg-slate-900/90 border border-white/[0.08] hover:border-teal-400/40 rounded-3xl p-8 border-l-4 border-l-teal-400 transition-all shadow-xl"
+                className="bg-slate-900/90 border border-white/[0.08] hover:border-teal-400/40 rounded-3xl p-6 md:p-8 border-l-4 border-l-teal-400 transition-all shadow-xl"
               >
                 <div className="flex flex-col md:flex-row justify-between md:items-start gap-2 mb-3">
                   <div>
-                    <h3 className="text-xl font-bold text-slate-100">{edu.school}</h3>
+                    <h3 className="text-lg md:text-xl font-bold text-slate-100">{edu.school}</h3>
                     <p className="text-teal-400 font-mono text-sm mt-1">{edu.degree}</p>
                   </div>
                   <span className="font-mono text-xs text-slate-400 bg-slate-800/90 px-3.5 py-1 rounded-full whitespace-nowrap w-fit border border-white/10">
@@ -1181,7 +1182,7 @@ export default function Page() {
             ].map((category) => (
               <div
                 key={category.title}
-                className="bg-slate-900/90 border border-white/[0.08] hover:border-teal-400/40 rounded-3xl p-8 transition-all shadow-xl"
+                className="bg-slate-900/90 border border-white/[0.08] hover:border-teal-400/40 rounded-3xl p-6 md:p-8 transition-all shadow-xl"
               >
                 <div className="flex items-center gap-3 mb-5">
                   <div className="p-2.5 rounded-2xl bg-teal-400/10 text-teal-400 border border-teal-400/20 shadow-inner">
@@ -1267,14 +1268,20 @@ export default function Page() {
         </section>
 
         {/* FOOTER */}
-        <footer className="pb-16 text-center text-xs text-slate-500 font-mono hover:text-teal-400 transition-colors">
+        <footer className="pb-16 flex flex-col items-center justify-center gap-4 text-center text-xs text-slate-500 font-mono">
           <a
             href="https://github.com/menonabhineet/portfolio"
             target="_blank"
             rel="noreferrer"
+            className="hover:text-teal-400 transition-colors"
           >
             <p>Designed &amp; Engineered by {resumeData.name}</p>
           </a>
+          
+          {/* Native View Counter Component */}
+          <div className="opacity-90 hover:opacity-100 transition-opacity flex items-center justify-center">
+            <ViewCounter />
+          </div>
         </footer>
       </main>
 
