@@ -58,10 +58,10 @@ export const metadata: Metadata = {
     siteName: "Portfolio - Abhineet Menon",
     images: [
       {
-        url: "/profile.jpg",
-        width: 800,
-        height: 800,
-        alt: "Abhineet Menon - Profile Photo",
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Abhineet Menon - Full-Stack & AI Data Engineer",
       },
     ],
     locale: "en_US",
@@ -71,7 +71,7 @@ export const metadata: Metadata = {
     title: "Abhineet Menon | Full-Stack, AI & Data Engineer",
     description:
       "MS CS student at UIC (4.0 GPA), ex-Senior Data Engineer at LTIMindtree. Full-Stack, AI & Data Engineering Portfolio.",
-    images: ["/profile.jpg"],
+    images: ["/opengraph-image"],
     creator: "@menonabhineet",
   },
   robots: {
