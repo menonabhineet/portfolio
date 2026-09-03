@@ -620,83 +620,123 @@ export default function Page() {
         </section>
 
         {/* 02. EXPERIENCE */}
-        <section id="experience" className="py-20 sm:py-32 max-w-3xl">
+        <section id="experience" className="py-20 sm:py-32 max-w-4xl">
           <h2 className="text-3xl font-bold text-slate-100 mb-12 flex items-center gap-4 drop-shadow-[0_2px_12px_rgba(5,8,20,0.95)]">
             Experience
             <span className="h-px flex-1 bg-white/10 max-w-xs"></span>
           </h2>
-          <div className="relative border-l border-white/10 ml-3 space-y-12">
-            {resumeData.work.map((job) => (
-              <div key={job.company} className="relative pl-8 group">
-                <div className="absolute -left-[5px] top-2 h-2.5 w-2.5 rounded-full bg-slate-800 ring-4 ring-[#050814] group-hover:bg-teal-400 group-hover:ring-teal-400/20 transition-all" />
-                
-                <div className="bg-slate-900/90 border border-white/[0.08] hover:border-teal-400/40 rounded-3xl p-4 sm:p-6 md:p-8 transition-all shadow-xl">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
-                    <h3 className="text-base md:text-lg font-bold text-slate-100">
-                      {job.title} <span className="text-teal-400">@</span>{" "}
-                      {job.link ? (
-                        <a
-                          href={job.link}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="hover:underline hover:text-teal-300 transition-colors"
-                        >
-                          {job.company}
-                        </a>
-                      ) : (
-                        <span>{job.company}</span>
+          <div className="relative">
+            {resumeData.work.map((job) => {
+              const isPresent = job.end.toLowerCase() === "present";
+              return (
+                <div
+                  key={job.company}
+                  className="relative md:grid md:grid-cols-[145px_1fr] md:gap-8 group"
+                >
+                  {/* Desktop Left Date Column */}
+                  <div className="hidden md:flex flex-col items-end text-right pt-6 pr-2 font-mono select-none">
+                    <span className="text-xs font-semibold text-slate-200 tracking-wider">
+                      {job.start}
+                    </span>
+                    <span className="text-[10px] text-slate-500 my-0.5">to</span>
+                    <span
+                      className={`text-xs font-bold inline-flex items-center gap-1.5 ${
+                        isPresent ? "text-emerald-400" : "text-slate-400"
+                      }`}
+                    >
+                      {isPresent && (
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
                       )}
-                    </h3>
-                    <span className="font-mono text-[10px] sm:text-xs text-slate-400 bg-slate-800/90 px-2.5 py-0.5 sm:px-3.5 sm:py-1 rounded-full w-fit mt-1 sm:mt-0 border border-white/10">
-                      {job.start} — {job.end}
+                      {job.end}
                     </span>
                   </div>
 
-                  {/* Impact Highlights Badges (Quantified Engineering Metrics) */}
-                  {(job as any).impactBadges && (job as any).impactBadges.length > 0 && (
-                    <div className="flex flex-wrap gap-2 my-3.5">
-                      {(job as any).impactBadges.map((badge: string) => (
-                        <span
-                          key={badge}
-                          className="inline-flex items-center gap-1 text-[11px] font-mono font-medium text-teal-300 bg-teal-950/40 border border-teal-500/25 px-2.5 py-1 rounded-lg"
-                        >
-                          <Zap size={11} className="text-teal-400 flex-shrink-0" />
-                          <span>{badge}</span>
-                        </span>
-                      ))}
-                    </div>
-                  )}
+                  {/* Right Column: Timeline Spine & Card */}
+                  <div className="relative pl-6 sm:pl-8 border-l border-white/10 ml-3 md:ml-0 pb-10 md:pb-14 last:pb-2">
+                    {/* Timeline Node Dot */}
+                    <div
+                      className={`absolute -left-[5px] top-7 h-2.5 w-2.5 rounded-full ring-4 ring-[#0b1120] transition-all duration-300 ${
+                        isPresent
+                          ? "bg-emerald-400 ring-emerald-500/20 group-hover:bg-teal-300 group-hover:scale-125 shadow-[0_0_12px_rgba(52,211,153,0.4)]"
+                          : "bg-slate-700 ring-[#0b1120] group-hover:bg-teal-400 group-hover:ring-teal-400/20 group-hover:scale-125"
+                      }`}
+                    />
 
-                  {/* Standard Tech Badges */}
-                  {job.badges && job.badges.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 mb-4">
-                      {job.badges.map((badge) => (
-                        <span
-                          key={badge}
-                          className="text-[11px] font-mono text-slate-300 bg-slate-800/80 px-2.5 py-0.5 rounded-md border border-white/10"
-                        >
-                          {badge}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+                    {/* Content Card */}
+                    <div className="bg-slate-900/90 border border-white/[0.08] hover:border-teal-400/40 rounded-3xl p-4 sm:p-6 md:p-8 transition-all shadow-xl hover:-translate-y-1">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
+                        <h3 className="text-base md:text-lg font-bold text-slate-100">
+                          {job.title} <span className="text-teal-400">@</span>{" "}
+                          {job.link ? (
+                            <a
+                              href={job.link}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="hover:underline hover:text-teal-300 transition-colors"
+                            >
+                              {job.company}
+                            </a>
+                          ) : (
+                            <span>{job.company}</span>
+                          )}
+                        </h3>
 
-                  {/* Full Descriptions Preserved */}
-                  <ul className="list-none space-y-2 sm:space-y-2.5 text-slate-300 text-xs sm:text-sm">
-                    {Array.isArray(job.description) ? (
-                      job.description.map((point, idx) => (
-                        <li key={idx} className="relative pl-5 leading-relaxed">
-                          <span className="absolute left-0 text-teal-400 font-bold">▹</span>
-                          {point}
-                        </li>
-                      ))
-                    ) : (
-                      <li>{job.description}</li>
-                    )}
-                  </ul>
+                        {/* Mobile Only Date Badge */}
+                        <span className="md:hidden font-mono text-[10px] sm:text-xs text-slate-400 bg-slate-800/90 px-2.5 py-0.5 sm:px-3.5 sm:py-1 rounded-full w-fit mt-1 sm:mt-0 border border-white/10">
+                          {job.start} — {job.end}
+                        </span>
+                      </div>
+
+                      {/* Impact Highlights Badges (Quantified Engineering Metrics) */}
+                      {(job as any).impactBadges && (job as any).impactBadges.length > 0 && (
+                        <div className="flex flex-wrap gap-2 my-3.5">
+                          {(job as any).impactBadges.map((badge: string) => (
+                            <span
+                              key={badge}
+                              className="inline-flex items-center gap-1 text-[11px] font-mono font-medium text-teal-300 bg-teal-950/40 border border-teal-500/25 px-2.5 py-1 rounded-lg"
+                            >
+                              <Zap size={11} className="text-teal-400 flex-shrink-0" />
+                              <span>{badge}</span>
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Standard Tech Badges */}
+                      {job.badges && job.badges.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 mb-4">
+                          {job.badges.map((badge) => (
+                            <span
+                              key={badge}
+                              className="text-[11px] font-mono text-slate-300 bg-slate-800/80 px-2.5 py-0.5 rounded-md border border-white/10"
+                            >
+                              {badge}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Full Descriptions Preserved */}
+                      <ul className="list-none space-y-2 sm:space-y-2.5 text-slate-300 text-xs sm:text-sm">
+                        {Array.isArray(job.description) ? (
+                          job.description.map((point, idx) => (
+                            <li key={idx} className="relative pl-5 leading-relaxed">
+                              <span className="absolute left-0 text-teal-400 font-bold">▹</span>
+                              {point}
+                            </li>
+                          ))
+                        ) : (
+                          <li>{job.description}</li>
+                        )}
+                      </ul>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
 
@@ -935,31 +975,61 @@ export default function Page() {
                           <div className="p-3 rounded-2xl bg-teal-400/10 text-teal-400 border border-teal-400/20 shadow-inner">
                             <FolderGit2 size={24} />
                           </div>
-                          {project.link.href ? (
-                            <a
-                              href={project.link.href}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="p-2 rounded-xl text-slate-400 hover:text-teal-300 hover:bg-teal-400/10 border border-transparent hover:border-teal-400/20 transition-all"
-                              aria-label={`Open ${project.title} GitHub repository`}
-                            >
-                              <ArrowUpRight size={22} />
-                            </a>
-                          ) : (
-                            <span className="text-xs font-mono text-teal-400 bg-teal-400/10 border border-teal-400/30 px-3 py-1 rounded-full">
-                              {project.link.label || "Coursework"}
-                            </span>
-                          )}
+                          <div className="flex items-center gap-2">
+                            {(project as any).liveUrl && (
+                              <a
+                                href={(project as any).liveUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 hover:border-emerald-400 text-emerald-300 text-xs font-mono font-medium transition-all shadow-[0_0_15px_rgba(16,185,129,0.15)] hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer"
+                                aria-label={`Launch live web application for ${project.title}`}
+                              >
+                                <span className="relative flex h-2 w-2">
+                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                </span>
+                                <span>Live App</span>
+                                <ArrowUpRight size={14} />
+                              </a>
+                            )}
+                            {project.link.href ? (
+                              <a
+                                href={project.link.href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-2 rounded-xl text-slate-400 hover:text-teal-300 hover:bg-teal-400/10 border border-transparent hover:border-teal-400/20 transition-all cursor-pointer"
+                                aria-label={`Open ${project.title} GitHub repository`}
+                                title="View Source on GitHub"
+                              >
+                                <Github size={22} />
+                              </a>
+                            ) : (
+                              <span className="text-xs font-mono text-teal-400 bg-teal-400/10 border border-teal-400/30 px-3 py-1 rounded-full">
+                                {project.link.label || "Coursework"}
+                              </span>
+                            )}
+                          </div>
                         </div>
 
                         {/* Title */}
                         <h3 className="text-lg md:text-xl font-bold text-slate-100 mb-2 leading-tight group-hover:text-teal-300 transition-colors">
-                          {project.link.href ? (
+                          {(project as any).liveUrl ? (
+                            <a
+                              href={(project as any).liveUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="hover:text-teal-300 transition-colors"
+                              aria-label={`Open ${(project as any).title} live web application`}
+                            >
+                              {project.title}
+                            </a>
+                          ) : project.link.href ? (
                             <a
                               href={project.link.href}
                               target="_blank"
-                              rel="noreferrer"
+                              rel="noopener noreferrer"
                               className="hover:text-teal-300 transition-colors"
+                              aria-label={`Open ${project.title} GitHub repository`}
                             >
                               {project.title}
                             </a>
@@ -1026,26 +1096,61 @@ export default function Page() {
                       <div className="p-3 rounded-2xl bg-teal-400/10 text-teal-400 border border-teal-400/20">
                         <FolderGit2 size={22} />
                       </div>
-                      {project.link.href ? (
-                        <a
-                          href={project.link.href}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="p-2 rounded-xl text-slate-400 hover:text-teal-300 hover:bg-teal-400/10 transition-colors"
-                          aria-label={`Open ${project.title}`}
-                        >
-                          <ArrowUpRight size={20} />
-                        </a>
-                      ) : (
-                        <span className="text-xs font-mono text-teal-400 bg-teal-400/10 border border-teal-400/30 px-3 py-1 rounded-full">
-                          {project.link.label || "Coursework"}
-                        </span>
-                      )}
+                      <div className="flex items-center gap-2">
+                        {(project as any).liveUrl && (
+                          <a
+                            href={(project as any).liveUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 hover:border-emerald-400 text-emerald-300 text-xs font-mono font-medium transition-all shadow-[0_0_15px_rgba(16,185,129,0.15)] hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer"
+                            aria-label={`Launch live web application for ${project.title}`}
+                          >
+                            <span className="relative flex h-2 w-2">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                            </span>
+                            <span>Live App</span>
+                            <ArrowUpRight size={14} />
+                          </a>
+                        )}
+                        {project.link.href ? (
+                          <a
+                            href={project.link.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-2 rounded-xl text-slate-400 hover:text-teal-300 hover:bg-teal-400/10 border border-transparent hover:border-teal-400/20 transition-colors cursor-pointer"
+                            aria-label={`Open ${project.title} GitHub repository`}
+                            title="View Source on GitHub"
+                          >
+                            <Github size={20} />
+                          </a>
+                        ) : (
+                          <span className="text-xs font-mono text-teal-400 bg-teal-400/10 border border-teal-400/30 px-3 py-1 rounded-full">
+                            {project.link.label || "Coursework"}
+                          </span>
+                        )}
+                      </div>
                     </div>
 
                     <h3 className="text-lg md:text-xl font-bold text-slate-100 mb-2 group-hover:text-teal-300 transition-colors">
-                      {project.link.href ? (
-                        <a href={project.link.href} target="_blank" rel="noreferrer" className="hover:underline">
+                      {(project as any).liveUrl ? (
+                        <a
+                          href={(project as any).liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:underline"
+                          aria-label={`Open ${project.title} live web application`}
+                        >
+                          {project.title}
+                        </a>
+                      ) : project.link.href ? (
+                        <a
+                          href={project.link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:underline"
+                          aria-label={`Open ${project.title} GitHub repository`}
+                        >
                           {project.title}
                         </a>
                       ) : (

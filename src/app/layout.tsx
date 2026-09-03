@@ -35,6 +35,9 @@ export const metadata: Metadata = {
     "DeepSeek",
     "Zustand",
     "Compiler Design",
+    "Pro Pundits League FPL",
+    "HVAC Field Estimate PWA",
+    "NYC Restaurant Inspection UMAP",
   ],
   authors: [{ name: "Abhineet Menon", url: "https://menonabhineet.github.io/portfolio" }],
   creator: "Abhineet Menon",
@@ -133,6 +136,44 @@ const jsonLd = {
         "Python",
         "TypeScript",
         "Compiler Design",
+      ],
+      "hasPart": [
+        {
+          "@type": "WebApplication",
+          "name": "Pro Pundits League - FPL Addon Platform",
+          "url": "https://pro-pundits-league.vercel.app",
+          "applicationCategory": "SportsApplication",
+          "operatingSystem": "All",
+          "description":
+            "Full-stack companion platform for Fantasy Premier League mini-leagues featuring real-time data sync with official FPL REST APIs and automated scoring.",
+          "author": {
+            "@id": "https://menonabhineet.github.io/portfolio/#person",
+          },
+        },
+        {
+          "@type": "WebApplication",
+          "name": "HVAC Field Estimate - On-Site Quoting Tool",
+          "url": "https://menonabhineet.github.io/hvac-field-estimate/",
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "All",
+          "description":
+            "Mobile-first, offline-resilient Progressive Web App (PWA) for HVAC technicians to generate on-site service estimates and client quotes.",
+          "author": {
+            "@id": "https://menonabhineet.github.io/portfolio/#person",
+          },
+        },
+        {
+          "@type": "WebApplication",
+          "name": "NYC Restaurant Inspection Analytics & UMAP Explorer",
+          "url": "https://menonabhineet.github.io/NYC-restaurant-viz/",
+          "applicationCategory": "DataVisualization",
+          "operatingSystem": "All",
+          "description":
+            "Interactive multi-view visual analytics platform analyzing 280,000+ NYC restaurant inspections with UMAP semantic clustering.",
+          "author": {
+            "@id": "https://menonabhineet.github.io/portfolio/#person",
+          },
+        },
       ],
     },
     {

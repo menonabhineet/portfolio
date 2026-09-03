@@ -44,26 +44,6 @@ export const resumeData = {
   ],
   work: [
     {
-      company: "Shop Scout",
-      link: "https://www.shoppingwithscout.com/",
-      badges: ["Python", "asyncio", "C#", ".NET 8", "AWS", "SQL Server"],
-      impactBadges: [
-        "2.49x Throughput Lift",
-        "2.7M Rows Recovered",
-        "51% Block Rate Drop",
-        "Idempotent Schemas",
-      ],
-      title: "Backend Engineer Intern",
-      start: "Jul 2026",
-      end: "Present",
-      description: [
-        "Re-architected a single-threaded Python scraping consumer into an asyncio dual-lane scheduler, decoupling headless-Chrome scraping from third-party APIs to increase throughput by 2.49x (to 464 products/hour).",
-        "Built C# / .NET 8 end-of-run reconciliation pipelines integrating AWS SQS, S3, and SQL Server to generate capture-rate KPIs, custom CloudWatch metrics, and SNS alarms.",
-        "Reconstructed 2.7M historical outcome rows spanning 21 months from S3 object logs, and instrumented the pipeline with JSONL logging for robust per-product reconciliation.",
-        "Identified and resolved three latent concurrency defects, root-caused anti-bot blocking (PerimeterX, Cloudflare) to cut Access Denied results by 51%, and designed idempotent SQL Server schemas."
-      ],
-    },
-    {
       company: "BalanX Bio",
       link: "https://www.balanxbio.com/",
       badges: ["Python", "ChromaDB", "SQLite", "Redis", "Groq LLM", "Affective Computing"],
@@ -81,6 +61,26 @@ export const resumeData = {
         "Engineered a local deterministic semantic entity extractor with isolated sliding-window buffers, eliminating cloud network latency and completely resolving cross-domain pattern contamination.",
         "Designed a continuous 3D Affective Space (VAD) clustering engine with a noise-tolerant sliding window and physiological telemetry corroboration to validate stress biomarkers.",
         "Implemented a tri-modal hybrid memory retrieval algorithm (Semantic + Affective + Ebbinghaus Recency) and migrated state persistence to a thread-safe SQLite database for robust concurrency."
+      ],
+    },
+    {
+      company: "Shop Scout",
+      link: "https://www.shoppingwithscout.com/",
+      badges: ["Python", "asyncio", "C#", ".NET 8", "AWS", "SQL Server"],
+      impactBadges: [
+        "2.49x Throughput Lift",
+        "2.7M Rows Recovered",
+        "51% Block Rate Drop",
+        "Idempotent Schemas",
+      ],
+      title: "Backend Engineer Intern",
+      start: "Jul 2026",
+      end: "Present",
+      description: [
+        "Re-architected a single-threaded Python scraping consumer into an asyncio dual-lane scheduler, decoupling headless-Chrome scraping from third-party APIs to increase throughput by 2.49x (to 464 products/hour).",
+        "Built C# / .NET 8 end-of-run reconciliation pipelines integrating AWS SQS, S3, and SQL Server to generate capture-rate KPIs, custom CloudWatch metrics, and SNS alarms.",
+        "Reconstructed 2.7M historical outcome rows spanning 21 months from S3 object logs, and instrumented the pipeline with JSONL logging for robust per-product reconciliation.",
+        "Identified and resolved three latent concurrency defects, root-caused anti-bot blocking (PerimeterX, Cloudflare) to cut Access Denied results by 51%, and designed idempotent SQL Server schemas."
       ],
     },
     {
@@ -162,6 +162,7 @@ export const resumeData = {
         label: "GitHub",
         href: "https://github.com/menonabhineet/fpl-addon-app",
       },
+      liveUrl: "https://pro-pundits-league.vercel.app",
     },
     {
       title: "CaseQuery - Legal RAG System",
@@ -242,6 +243,7 @@ export const resumeData = {
         label: "GitHub",
         href: "https://github.com/menonabhineet/hvac-field-estimate",
       },
+      liveUrl: "https://menonabhineet.github.io/hvac-field-estimate/",
     },
     {
       title: "NYC Restaurant Inspection Analytics & UMAP Explorer",
@@ -258,6 +260,7 @@ export const resumeData = {
         label: "GitHub",
         href: "https://github.com/menonabhineet/NYC-restaurant-viz",
       },
+      liveUrl: "https://menonabhineet.github.io/NYC-restaurant-viz/",
     },
     {
       title: "BattyCoda: Acoustic Classification",

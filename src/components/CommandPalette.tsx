@@ -179,7 +179,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         keywords: [
           proj.title.toLowerCase(),
           ...proj.techStack.map((t) => t.toLowerCase()),
-          ...(proj as any).categories || [],
+          ...((proj as any).categories || []),
         ],
         action: () => {
           onClose();
@@ -190,6 +190,31 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           }
         },
       });
+
+      // Quick launch action for projects with hosted liveUrl
+      if ((proj as any).liveUrl) {
+        list.push({
+          id: `launch-${proj.title}`,
+          title: `Launch ${proj.title} (Live App)`,
+          subtitle: (proj as any).liveUrl,
+          category: "Actions",
+          icon: ExternalLink,
+          keywords: [
+            "launch",
+            "open",
+            "live",
+            "demo",
+            "app",
+            "frontend",
+            proj.title.toLowerCase(),
+            ...proj.techStack.map((t) => t.toLowerCase()),
+          ],
+          action: () => {
+            onClose();
+            window.open((proj as any).liveUrl, "_blank", "noopener,noreferrer");
+          },
+        });
+      }
     });
 
     return list;
