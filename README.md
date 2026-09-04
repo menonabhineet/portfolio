@@ -31,3 +31,10 @@ Personal portfolio website showcasing experience in enterprise Data Engineering 
 - **Email**: [menonabhineet@gmail.com](mailto:menonabhineet@gmail.com)
 - **LinkedIn**: [linkedin.com/in/menonabhineet](https://linkedin.com/in/menonabhineet)
 - **GitHub**: [github.com/menonabhineet](https://github.com/menonabhineet)
+
+---
+
+### 💡 Using this as a template?
+
+Feel free to fork or draw inspiration from this project! All I kindly ask is that you keep a small attribution link back to this repository or my profile in your footer/README. Happy coding!
+

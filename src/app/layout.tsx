@@ -7,6 +7,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://menonabhineet.github.io/portfolio"),
+  generator: "Abhineet Menon Portfolio Engine (https://github.com/menonabhineet/portfolio)",
   title: {
     default: "Abhineet Menon | Full-Stack, AI & Data Engineer | MS CS @ UIC",
     template: "%s | Abhineet Menon",
@@ -214,6 +215,11 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `console.log("%c Designed & Developed by Abhineet Menon \\n%c https://github.com/menonabhineet/portfolio ", "background: #0f172a; color: #2dd4bf; font-size: 12px; font-weight: bold; padding: 4px 8px; border-radius: 4px 4px 0 0; border: 1px solid #1e293b;", "background: #1e293b; color: #94a3b8; font-size: 11px; padding: 3px 8px; border-radius: 0 0 4px 4px; border: 1px solid #1e293b;");`,
+          }}
         />
         <link rel="icon" type="image/svg+xml" href="/portfolio/favicon.svg" />
       </head>
