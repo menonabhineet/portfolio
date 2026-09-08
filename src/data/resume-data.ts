@@ -1,13 +1,13 @@
 export const resumeData = {
   name: "Abhineet Menon",
   initials: "AM",
-  location: "Open to Relocation",
+  location: "Chicago, IL",
   locationLink: "",
   about:
     "I am a Data Engineer who doesn't just move data, I build the systems that make data useful. With a foundation in full-stack development and a Master's degree from UIC, I bridge the technical gap between raw ETL pipelines and polished user experiences. My work at LTIMindtree involved optimizing high-scale Snowflake migrations, while my personal projects explore the nuances of ML and Application Design. I value clean code, scalable architecture, and solving hard problems with elegant solutions.",
   summary:
     "I am a Full-Stack Data Engineer with a hybrid background in distributed systems and application development. Currently pursuing my MS in Computer Science at UIC (4.0 GPA), I have professional experience optimizing ETL pipelines at LTIMindtree and building full-stack web solutions.",
-  avatarUrl: "./profile.jpg",
+  avatarUrl: "",
   resumeUrl: "./Abhineet_Menon_Resume.pdf",
   personalWebsiteUrl: "https://menonabhineet.github.io/portfolio",
   contact: {

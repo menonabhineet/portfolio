@@ -5,6 +5,8 @@ import { MatrixBackground } from "@/components/MatrixBackground";
 import { ResumeModal } from "@/components/ResumeModal";
 import { CommandPalette } from "@/components/CommandPalette";
 import { ViewCounter } from "@/components/ViewCounter";
+import InteractiveMeshCard from "@/components/InteractiveMeshCard";
+import GeometricEmblemCard from "@/components/GeometricEmblemCard";
 import { fuzzyMatchItem } from "@/lib/fuzzy";
 import {
   Github,
@@ -477,7 +479,7 @@ export default function Page() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-400"></span>
             </span>
-            <span>Open to Relocation • MS in Computer Science @ UIC</span>
+            <span>MS in Computer Science @ UIC • 4.0 GPA</span>
           </div>
 
           <p className="text-teal-400 font-mono text-sm md:text-base mb-3 tracking-wider font-semibold drop-shadow-[0_2px_8px_rgba(5,8,20,0.9)]">
@@ -595,26 +597,9 @@ export default function Page() {
               </div>
             </div>
 
-            {/* Profile Picture Card */}
-            <div className="hidden md:flex md:col-span-5 justify-center">
-              <div className="relative group w-full max-w-[180px] sm:max-w-[220px] md:max-w-[280px]">
-                <div className="relative rounded-3xl p-3 bg-slate-900/90 border border-teal-500/30 shadow-[0_0_35px_rgba(45,212,191,0.2)] group-hover:border-teal-400/70 group-hover:shadow-[0_0_45px_rgba(45,212,191,0.35)] transition-all duration-500">
-                  <div className="relative rounded-2xl overflow-hidden aspect-[4/5] bg-slate-800">
-                    <img
-                      src={resumeData.avatarUrl}
-                      alt={resumeData.name}
-                      className="w-full h-full object-cover object-[67%_18%] scale-105 group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-60 group-hover:opacity-20 transition-opacity"></div>
-                  </div>
-
-                  {/* Floating Location Pill */}
-                  <div className="mt-3 flex items-center justify-center gap-1.5 text-xs font-mono text-teal-300 font-semibold py-1">
-                    <MapPin size={13} className="text-teal-400" />
-                    <span>Open to Relocation</span>
-                  </div>
-                </div>
-              </div>
+            {/* Geometric Monogram Emblem Card (Concept 6) */}
+            <div className="flex md:col-span-5 justify-center mt-6 md:mt-0">
+              <GeometricEmblemCard />
             </div>
           </div>
         </section>

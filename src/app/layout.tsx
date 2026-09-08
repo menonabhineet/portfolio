@@ -9,14 +9,20 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://menonabhineet.github.io/portfolio"),
   generator: "Abhineet Menon Portfolio Engine (https://github.com/menonabhineet/portfolio)",
   title: {
-    default: "Abhineet Menon | Full-Stack, AI & Data Engineer | MS CS @ UIC",
+    default: "Abhineet Menon | Portfolio | Full-Stack, AI & Data Engineer",
     template: "%s | Abhineet Menon",
   },
   description:
-    "Official portfolio of Abhineet Menon — Master's in Computer Science student at UIC (4.0 GPA), ex-Senior Data Engineer at LTIMindtree. Specializing in AI/LLMs, RAG, Distributed Systems, and Full-Stack Engineering. Open to relocation.",
+    "Official portfolio of Abhineet Menon - Master's in Computer Science graduate from UIC (4.0 GPA), ex-Data Engineer at LTIMindtree. Specializing in AI/LLMs, RAG, Data, and Full-Stack Engineering.",
   keywords: [
     "Abhineet Menon",
     "Abhineet",
+    "Abhineet Portfolio",
+    "Abhineet UIC",
+    "Abhineet UIC Portfolio",
+    "Abhinith",
+    "Abhinit",
+    "Abhineet Chicago",
     "Menon",
     "Abhineet Menon Portfolio",
     "Abhineet Menon UIC",
@@ -26,19 +32,14 @@ export const metadata: Metadata = {
     "Abhineet Menon Full-Stack",
     "Abhineet Menon AI",
     "Abhineet Menon LTIMindtree",
-    "Abhineet Menon Relocation",
     "Data Engineer",
     "AI Engineer",
     "RAG Systems",
     "LLM Evaluation",
     "Snowflake",
     "Next.js",
-    "DeepSeek",
-    "Zustand",
     "Compiler Design",
     "Pro Pundits League FPL",
-    "HVAC Field Estimate PWA",
-    "NYC Restaurant Inspection UMAP",
   ],
   authors: [{ name: "Abhineet Menon", url: "https://menonabhineet.github.io/portfolio" }],
   creator: "Abhineet Menon",
@@ -52,11 +53,11 @@ export const metadata: Metadata = {
     lastName: "Menon",
     username: "menonabhineet",
     gender: "male",
-    title: "Abhineet Menon | Full-Stack, AI & Data Engineer | MS CS @ UIC",
+    title: "Abhineet Menon | Portfolio | Full-Stack, AI & Data Engineer",
     description:
-      "Official portfolio of Abhineet Menon — Master's in Computer Science student at UIC (4.0 GPA), ex-Senior Data Engineer at LTIMindtree. Specializing in AI/LLMs, RAG, Distributed Systems, and Full-Stack Engineering.",
+      "Official portfolio of Abhineet Menon - Master's in Computer Science graduate from UIC (4.0 GPA), ex-Data Engineer at LTIMindtree. Specializing in AI/LLMs, RAG, Data, and Full-Stack Engineering.",
     url: "https://menonabhineet.github.io/portfolio",
-    siteName: "Portfolio - Abhineet Menon",
+    siteName: "Abhineet Menon",
     images: [
       {
         url: "/opengraph-image",
@@ -67,9 +68,22 @@ export const metadata: Metadata = {
     ],
     locale: "en_US",
   },
+  icons: {
+    icon: [
+      { url: "/portfolio/favicon.ico", sizes: "48x48" },
+      { url: "/portfolio/icon-48.png", sizes: "48x48", type: "image/png" },
+      { url: "/portfolio/icon-96.png", sizes: "96x96", type: "image/png" },
+      { url: "/portfolio/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/portfolio/favicon.svg", type: "image/svg+xml" },
+    ],
+    apple: [
+      { url: "/portfolio/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    shortcut: ["/portfolio/favicon.ico"],
+  },
   twitter: {
     card: "summary_large_image",
-    title: "Abhineet Menon | Full-Stack, AI & Data Engineer",
+    title: "Abhineet Menon | Portfolio | Full-Stack, AI & Data Engineer",
     description:
       "MS CS student at UIC (4.0 GPA), ex-Senior Data Engineer at LTIMindtree. Full-Stack, AI & Data Engineering Portfolio.",
     images: ["/opengraph-image"],
@@ -99,7 +113,7 @@ const jsonLd = {
       "familyName": "Menon",
       "email": "menonabhineet@gmail.com",
       "url": "https://menonabhineet.github.io/portfolio",
-      "image": "https://menonabhineet.github.io/portfolio/profile.jpg",
+      "image": "https://menonabhineet.github.io/portfolio/opengraph-image",
       "jobTitle": "Full-Stack & AI Data Engineer",
       "worksFor": {
         "@type": "Organization",
@@ -181,10 +195,10 @@ const jsonLd = {
       "@type": "WebSite",
       "@id": "https://menonabhineet.github.io/portfolio/#website",
       "url": "https://menonabhineet.github.io/portfolio",
-      "name": "Portfolio - Abhineet Menon",
-      "alternateName": ["Abhineet Menon Portfolio", "Abhineet Menon"],
+      "name": "Abhineet Menon",
+      "alternateName": ["Abhineet Menon Portfolio", "Portfolio - Abhineet Menon"],
       "description":
-        "Portfolio of Abhineet Menon — MS in Computer Science student at UIC, Data Engineer, and Full-Stack Developer.",
+        "Portfolio of Abhineet Menon - MS in Computer Science student at UIC, Data Engineer, and Full-Stack Developer.",
       "publisher": {
         "@id": "https://menonabhineet.github.io/portfolio/#person",
       },
@@ -221,7 +235,12 @@ export default function RootLayout({
             __html: `console.log("%c Designed & Developed by Abhineet Menon \\n%c https://github.com/menonabhineet/portfolio ", "background: #0f172a; color: #2dd4bf; font-size: 12px; font-weight: bold; padding: 4px 8px; border-radius: 4px 4px 0 0; border: 1px solid #1e293b;", "background: #1e293b; color: #94a3b8; font-size: 11px; padding: 3px 8px; border-radius: 0 0 4px 4px; border: 1px solid #1e293b;");`,
           }}
         />
+        <link rel="icon" href="/portfolio/favicon.ico" sizes="48x48" />
+        <link rel="icon" type="image/png" sizes="48x48" href="/portfolio/icon-48.png" />
+        <link rel="icon" type="image/png" sizes="96x96" href="/portfolio/icon-96.png" />
+        <link rel="icon" type="image/png" sizes="192x192" href="/portfolio/icon-192.png" />
         <link rel="icon" type="image/svg+xml" href="/portfolio/favicon.svg" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/portfolio/apple-touch-icon.png" />
       </head>
       <body className={`${inter.className} bg-[#0b1120] text-slate-100 antialiased selection:bg-teal-400 selection:text-slate-950`}>
         {children}
