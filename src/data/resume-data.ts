@@ -8,7 +8,7 @@ export const resumeData = {
   summary:
     "I am a Full-Stack Data Engineer with a hybrid background in distributed systems and application development. Currently pursuing my MS in Computer Science at UIC (4.0 GPA), I have professional experience optimizing ETL pipelines at LTIMindtree and building full-stack web solutions.",
   avatarUrl: "",
-  resumeUrl: "./Abhineet_Menon_Resume.pdf",
+  resumeUrl: "./AbhineetMenon_Resume.pdf",
   personalWebsiteUrl: "https://menonabhineet.github.io/portfolio",
   contact: {
     email: "menonabhineet@gmail.com",

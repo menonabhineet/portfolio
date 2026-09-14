@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { X, Download, ExternalLink, FileText, Loader2 } from "lucide-react";
 
+import { trackEvent } from "@/lib/analytics";
+
 interface ResumeModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -12,7 +14,7 @@ interface ResumeModalProps {
 export const ResumeModal: React.FC<ResumeModalProps> = ({
   isOpen,
   onClose,
-  resumeUrl = "./Abhineet_Menon_Resume.pdf",
+  resumeUrl = "./AbhineetMenon_Resume.pdf",
 }) => {
   const [isLoading, setIsLoading] = useState(true);
 
@@ -24,6 +26,7 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({
       }
     };
     if (isOpen) {
+      trackEvent("resume_modal_open", { file: "AbhineetMenon_Resume.pdf" });
       window.addEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "hidden";
     }
@@ -54,7 +57,7 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({
             </div>
             <div>
               <h2 className="text-base sm:text-lg font-bold text-slate-100 font-mono tracking-tight flex items-center gap-2">
-                <span>Abhineet_Menon_Resume.pdf</span>
+                <span>AbhineetMenon_Resume.pdf</span>
                 <span className="hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] bg-teal-400/10 text-teal-300 border border-teal-400/30">
                   Official
                 </span>
@@ -67,7 +70,8 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({
           <div className="flex items-center gap-2">
             <a
               href={resumeUrl}
-              download="Abhineet_Menon_Resume.pdf"
+              download="AbhineetMenon_Resume.pdf"
+              onClick={() => trackEvent("resume_download", { file: "AbhineetMenon_Resume.pdf" })}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-teal-400 text-slate-950 text-xs font-mono font-bold hover:bg-teal-300 hover:shadow-[0_0_20px_rgba(45,212,191,0.4)] transition-all cursor-pointer"
               title="Download PDF to your computer"
             >
@@ -79,6 +83,7 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({
               href={resumeUrl}
               target="_blank"
               rel="noreferrer"
+              onClick={() => trackEvent("resume_new_tab", { file: "AbhineetMenon_Resume.pdf" })}
               className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800/90 text-slate-200 border border-white/10 text-xs font-mono hover:bg-slate-700 hover:text-white transition-all cursor-pointer"
               title="Open in new tab"
             >

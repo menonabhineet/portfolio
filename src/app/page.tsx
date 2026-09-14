@@ -8,6 +8,7 @@ import { ViewCounter } from "@/components/ViewCounter";
 import InteractiveMeshCard from "@/components/InteractiveMeshCard";
 import GeometricEmblemCard from "@/components/GeometricEmblemCard";
 import { fuzzyMatchItem } from "@/lib/fuzzy";
+import { trackEvent } from "@/lib/analytics";
 import {
   Github,
   Linkedin,
@@ -55,6 +56,8 @@ const ContactForm = () => {
     const body = `Name: ${formData.get("name")}\nEmail: ${formData.get(
       "email"
     )}\n\nMessage:\n${formData.get("message")}`;
+
+    trackEvent("contact_form_submit");
 
     setTimeout(() => {
       window.location.href = `mailto:${
@@ -236,9 +239,15 @@ export default function Page() {
   };
 
   const copyEmailToClipboard = () => {
+    trackEvent("contact_copy_email", { email: resumeData.contact.email });
     navigator.clipboard.writeText(resumeData.contact.email);
     setCopiedEmail(true);
     setTimeout(() => setCopiedEmail(false), 2500);
+  };
+
+  const handleOpenResumeModal = (source: string) => {
+    trackEvent("resume_btn_click", { source });
+    setIsResumeModalOpen(true);
   };
 
   // --- KEYBOARD SHORTCUTS (Ctrl+K, 3D Navigation) ---
@@ -402,7 +411,7 @@ export default function Page() {
 
             {/* Official Resume Button */}
             <button
-              onClick={() => setIsResumeModalOpen(true)}
+              onClick={() => handleOpenResumeModal("header_nav")}
               className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-teal-400/10 border border-teal-400/30 hover:border-teal-400 hover:bg-teal-400 hover:text-slate-950 text-teal-300 text-xs font-mono font-semibold transition-all duration-200 cursor-pointer shadow-sm"
               title="Preview & Download Official Resume PDF"
             >
@@ -507,7 +516,7 @@ export default function Page() {
               <ArrowRight size={16} />
             </button>
             <button
-              onClick={() => setIsResumeModalOpen(true)}
+              onClick={() => handleOpenResumeModal("hero_cta")}
               className="px-6 py-4 rounded-full bg-teal-400/10 border border-teal-400/40 text-teal-300 font-mono font-semibold text-sm hover:bg-teal-400 hover:text-slate-950 transition-all duration-300 cursor-pointer flex items-center gap-2 shadow-md"
             >
               <FileText size={16} />
@@ -966,6 +975,12 @@ export default function Page() {
                                 href={(project as any).liveUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                onClick={() =>
+                                  trackEvent("project_live_click", {
+                                    project: project.title,
+                                    url: (project as any).liveUrl,
+                                  })
+                                }
                                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 hover:border-emerald-400 text-emerald-300 text-xs font-mono font-medium transition-all shadow-[0_0_15px_rgba(16,185,129,0.15)] hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer"
                                 aria-label={`Launch live web application for ${project.title}`}
                               >
@@ -982,6 +997,12 @@ export default function Page() {
                                 href={project.link.href}
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                onClick={() =>
+                                  trackEvent("project_repo_click", {
+                                    project: project.title,
+                                    url: project.link.href,
+                                  })
+                                }
                                 className="p-2 rounded-xl text-slate-400 hover:text-teal-300 hover:bg-teal-400/10 border border-transparent hover:border-teal-400/20 transition-all cursor-pointer"
                                 aria-label={`Open ${project.title} GitHub repository`}
                                 title="View Source on GitHub"
@@ -1003,6 +1024,12 @@ export default function Page() {
                               href={(project as any).liveUrl}
                               target="_blank"
                               rel="noopener noreferrer"
+                              onClick={() =>
+                                trackEvent("project_live_click", {
+                                  project: project.title,
+                                  url: (project as any).liveUrl,
+                                })
+                              }
                               className="hover:text-teal-300 transition-colors"
                               aria-label={`Open ${(project as any).title} live web application`}
                             >
@@ -1013,6 +1040,12 @@ export default function Page() {
                               href={project.link.href}
                               target="_blank"
                               rel="noopener noreferrer"
+                              onClick={() =>
+                                trackEvent("project_repo_click", {
+                                  project: project.title,
+                                  url: project.link.href,
+                                })
+                              }
                               className="hover:text-teal-300 transition-colors"
                               aria-label={`Open ${project.title} GitHub repository`}
                             >
@@ -1087,6 +1120,12 @@ export default function Page() {
                             href={(project as any).liveUrl}
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={() =>
+                              trackEvent("project_live_click", {
+                                project: project.title,
+                                url: (project as any).liveUrl,
+                              })
+                            }
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 hover:border-emerald-400 text-emerald-300 text-xs font-mono font-medium transition-all shadow-[0_0_15px_rgba(16,185,129,0.15)] hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer"
                             aria-label={`Launch live web application for ${project.title}`}
                           >
@@ -1103,6 +1142,12 @@ export default function Page() {
                             href={project.link.href}
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={() =>
+                              trackEvent("project_repo_click", {
+                                project: project.title,
+                                url: project.link.href,
+                              })
+                            }
                             className="p-2 rounded-xl text-slate-400 hover:text-teal-300 hover:bg-teal-400/10 border border-transparent hover:border-teal-400/20 transition-colors cursor-pointer"
                             aria-label={`Open ${project.title} GitHub repository`}
                             title="View Source on GitHub"
@@ -1123,6 +1168,12 @@ export default function Page() {
                           href={(project as any).liveUrl}
                           target="_blank"
                           rel="noopener noreferrer"
+                          onClick={() =>
+                            trackEvent("project_live_click", {
+                              project: project.title,
+                              url: (project as any).liveUrl,
+                            })
+                          }
                           className="hover:underline"
                           aria-label={`Open ${project.title} live web application`}
                         >
@@ -1133,6 +1184,12 @@ export default function Page() {
                           href={project.link.href}
                           target="_blank"
                           rel="noopener noreferrer"
+                          onClick={() =>
+                            trackEvent("project_repo_click", {
+                              project: project.title,
+                              url: project.link.href,
+                            })
+                          }
                           className="hover:underline"
                           aria-label={`Open ${project.title} GitHub repository`}
                         >
@@ -1327,7 +1384,7 @@ export default function Page() {
                 <span>{copiedEmail ? "Email Copied!" : resumeData.contact.email}</span>
               </button>
               <button
-                onClick={() => setIsResumeModalOpen(true)}
+                onClick={() => handleOpenResumeModal("contact_section")}
                 className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-slate-950 hover:bg-slate-800 border border-white/10 hover:border-teal-400 text-xs font-mono text-slate-200 hover:text-teal-300 transition-all shadow-md cursor-pointer"
               >
                 <FileText size={14} className="text-teal-400" />
@@ -1337,6 +1394,7 @@ export default function Page() {
                 href="https://linkedin.com/in/menonabhineet"
                 target="_blank"
                 rel="noreferrer"
+                onClick={() => trackEvent("social_click", { platform: "LinkedIn" })}
                 className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-slate-950 hover:bg-slate-800 border border-white/10 hover:border-teal-400 text-xs font-mono text-slate-200 hover:text-teal-300 transition-all shadow-md"
               >
                 <Linkedin size={14} className="text-teal-400" />
@@ -1346,6 +1404,7 @@ export default function Page() {
                 href="https://github.com/menonabhineet"
                 target="_blank"
                 rel="noreferrer"
+                onClick={() => trackEvent("social_click", { platform: "GitHub" })}
                 className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-slate-950 hover:bg-slate-800 border border-white/10 hover:border-teal-400 text-xs font-mono text-slate-200 hover:text-teal-300 transition-all shadow-md"
               >
                 <Github size={14} className="text-teal-400" />
@@ -1394,7 +1453,7 @@ export default function Page() {
       <ResumeModal
         isOpen={isResumeModalOpen}
         onClose={() => setIsResumeModalOpen(false)}
-        resumeUrl="./Abhineet_Menon_Resume.pdf"
+        resumeUrl={resumeData.resumeUrl || "./AbhineetMenon_Resume.pdf"}
       />
 
       {/* COMMAND PALETTE MODAL */}
